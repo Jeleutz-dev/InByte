@@ -4,8 +4,8 @@ class AppHeader extends HTMLElement {
         this.innerHTML = `
             <nav class="navbar">
                 <!-- LEFT: Logo & Title -->
-                <a href="/InByte/docs/" class="logo-container">
-                    <img src="/InByte/docs/assets/InByte.png" alt="InByte Logo" class="nav-logo-img">
+                <a href="/InByte/" class="logo-container">
+                    <img src="/InByte/assets/InByte.png" alt="InByte Logo" class="nav-logo-img">
                     <div class="logo-text">
                         <span style="color: #f1c1c8;">In</span><span style="color: #8e5968;">Byte</span><span>.date</span>
                     </div>
@@ -21,11 +21,11 @@ class AppHeader extends HTMLElement {
                 <!-- CENTER & RIGHT: Links and Actions (Collapsible on Mobile) -->
                 <div class="nav-menu" id="navMenu">
                     <div class="nav-center">
-                        <a href="/InByte/docs/pages/about.html">About</a>
-                        <a href="/InByte/docs/pages/contact.html">Contact</a>
+                        <a href="/InByte/pages/about.html">About</a>
+                        <a href="/InByte/pages/contact.html">Contact</a>
                     </div>
                     <div class="nav-right">
-                        <a href="/InByte/docs/pages/login.html" class="login-btn">Log In</a>
+                        <a href="/InByte/pages/login.html" class="login-btn">Log In</a>
                         <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
                     </div>
                 </div>
@@ -76,10 +76,10 @@ class AppFooter extends HTMLElement {
         this.innerHTML = `
             <footer class="footer">
                 <div class="footer-links">
-                    <a href="/InByte/docs/pages/privacy.html">Privacy Notice</a>
-                    <a href="/InByte/docs/pages/terms.html">Terms and Conditions</a>
-                    <a href="/InByte/docs/pages/contact.html">Contact Us</a>
-                    <a href="/InByte/docs/pages/faq.html">FAQ</a>
+                    <a href="/InByte/pages/privacy.html">Privacy Notice</a>
+                    <a href="/InByte/pages/terms.html">Terms and Conditions</a>
+                    <a href="/InByte/pages/contact.html">Contact Us</a>
+                    <a href="/InByte/pages/faq.html">FAQ</a>
                 </div>
                 <p class="footer-copy">&copy; 2026 InByte.date. All rights reserved.</p>
             </footer>
