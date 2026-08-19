@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions | InByte</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/inbyte-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+    <script src="../js/layout.js" defer></script>
+
+    <style>
+        /* Exact same styling as Privacy Page for a cohesive experience */
+        .page-container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+            overflow: hidden;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .legal-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            text-shadow: 0 4px 15px rgba(226, 54, 54, 0.15);
+        }
+
+        .last-updated {
+            font-size: 0.95rem;
+            opacity: 0.6;
+            font-style: italic;
+            display: inline-block;
+            background: var(--hover-bg);
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+
+        .legal-section {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid transparent; 
+            border-radius: 16px;
+            padding: 30px 40px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px var(--nav-shadow);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .legal-section:hover {
+            transform: translateX(8px);
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 12px 30px rgba(226, 54, 54, 0.1);
+        }
+
+        .legal-section h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legal-section p, .legal-section li {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            margin-bottom: 15px;
+        }
+
+        .legal-section ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+
+        @keyframes slideFadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            opacity: 0;
+            animation: slideFadeUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .legal-header h1 { font-size: 2.2rem; }
+            .legal-section { padding: 25px 20px; }
+            .legal-section:hover { transform: translateX(4px); }
+        }
+    </style>
+</head>
+<body>
+
+    <app-header></app-header>
+
+    <main class="page-container">
+        
+        <div class="legal-header animate-fade">
+            <h1>Terms and Conditions</h1>
+            <span class="last-updated">Last Updated: August 18, 2026</span>
+        </div>
+
+        <div class="legal-section animate-fade delay-1">
+            <p>Please read these Terms and Conditions carefully before using the InByte web application operated by InByte.</p>
+            <p style="margin:0;">Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>
+        </div>
+
+        <div class="legal-section animate-fade delay-2">
+            <h2>1. Description of Service</h2>
+            <p style="margin:0;">InByte provides a client-side tool that allows users to generate interactive, URL-encoded digital invitations. We provide the user interface and the animation templates, but we do not host, store, or transmit the final invitation data on our servers.</p>
+        </div>
+
+        <div class="legal-section animate-fade delay-3">
+            <h2>2. User Content Responsibility</h2>
+            <p>Because of our decentralized architecture, all data you input into the generator is compressed and appended directly to your unique link. By using this Service, you acknowledge and agree that:</p>
+            <ul>
+                <li><strong>You are solely responsible</strong> for the content you input into the generator.</li>
+                <li><strong>We cannot delete or retrieve</strong> an invitation once you have generated the link.</li>
+                <li><strong>You control who sees the data.</strong> Anyone with access to the link you generate will be able to read the contents.</li>
+            </ul>
+        </div>
+
+        <div class="legal-section animate-fade delay-4">
+            <h2>3. Acceptable Use</h2>
+            <p>You agree not to use the Service to generate links that:</p>
+            <ul>
+                <li>Contain unlawful, harassing, abusive, or threatening language.</li>
+                <li>Impersonate any person or entity.</li>
+                <li>Are used for phishing, spamming, or delivering malicious payloads.</li>
+            </ul>
+        </div>
+
+        <div class="legal-section animate-fade delay-5">
+            <h2>4. Limitation of Liability</h2>
+            <p>In no event shall InByte, nor its developers, be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the Service.</p>
+            <p style="margin:0;">Furthermore, we assume no liability for the romantic outcome, success, or failure of the dates initiated through our platform.</p>
+        </div>
+
+    </main>
+
+    <app-footer></app-footer>
+
+</body>
+</html>

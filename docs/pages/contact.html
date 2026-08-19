@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | InByte</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/inbyte-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Go up one folder to access the css folder -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Anti-Flash Script for Dark Mode -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+    
+    <!-- Go up one folder to access the js folder -->
+    <script src="../js/layout.js" defer></script>
+
+    <style>
+        /* Specific styles for the Contact Page */
+        .contact-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+            flex: 1; /* Pushes footer down */
+        }
+
+        .contact-container h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .contact-container p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 50px;
+            max-width: 500px;
+        }
+
+        /* The floating cards wrapper */
+        .contact-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1000px;
+        }
+
+        /* Individual Contact Card */
+        .contact-card {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px var(--nav-shadow);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+
+        /* The Float Effect! */
+        .contact-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(226, 54, 54, 0.15); /* Soft red shadow */
+            border-color: var(--primary-color);
+        }
+
+        /* Icon Container */
+        .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(226, 54, 54, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .contact-card:hover .icon-wrapper {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .icon-wrapper svg {
+            width: 32px;
+            height: 32px;
+            fill: currentColor;
+        }
+
+        .contact-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .contact-detail {
+            font-size: 1rem;
+            opacity: 0.8;
+            word-break: break-word;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .contact-container h1 { font-size: 2.2rem; }
+            .contact-card { width: 100%; max-width: 300px; padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <app-header></app-header>
+
+    <main class="contact-container">
+        <h1>Let's Connect</h1>
+        <p>Have a question, a custom request, or just want to say hi? Here is where you can find me.</p>
+
+        <div class="contact-grid">
+            
+            <!-- PHONE CARD -->
+            <a href="tel:+639451490311" class="contact-card">
+                <div class="icon-wrapper">
+                    <!-- Phone SVG Icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                </div>
+                <div class="contact-title">Call / Text</div>
+                <div class="contact-detail">+63 945 149 0311</div>
+            </a>
+
+            <!-- EMAIL CARD -->
+            <a href="mailto:Jeleutz19@gmail.com" class="contact-card">
+                <div class="icon-wrapper">
+                    <!-- Email SVG Icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </div>
+                <div class="contact-title">Email</div>
+                <div class="contact-detail">Jeleutz19@gmail.com</div>
+                <!-- <div class="contact-detail">alayonerikamae@gmail.com</div> -->
+            </a>
+
+            <!-- TIKTOK CARD -->
+            <!--
+            <a href="https://www.tiktok.com/@erikaalayon_" target="_blank" class="contact-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 448 512">
+                        <path d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"/>
+                    </svg>
+                </div>
+                <div class="contact-title">TikTok</div>
+                <div class="contact-detail">@erikaalayon_</div>
+            </a>
+            -->
+        </div>
+    </main>
+
+    <app-footer></app-footer>
+
+</body>
+</html>

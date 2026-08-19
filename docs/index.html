@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InByte.date</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="./assets/inbyte-icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/home.css">
+
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+    
+    <script src="./js/layout.js" defer></script>
+
+</head>
+<body>
+
+    <audio id="demoScreamSound">
+        <source src="./assets/effects/scream.mp3" type="audio/mpeg">
+    </audio>
+
+    <app-header></app-header>
+
+    <!-- NEW: The container for our floating background emojis -->
+    <div id="emojiContainer" class="floating-emojis-container"></div>
+
+    <main>
+        <!-- HERO & DEMO SECTION -->
+        <section class="hero scroll-fade visible">
+            <!-- Wrapped the sparkle in a span to animate it! -->
+            <h1>Drop a link. Set the scene. <span class="title-sparkle">✨</span></h1>
+            <p>Stop sending boring texts. Send an experience. Interact with a live preview below and see how one link sets the entire stage.</p>
+            
+            <!-- NEW OUTER CONTAINER -->
+            <div class="demo-outer-container">
+
+                <!-- NEW LIVE PREVIEW BADGE ADDED HERE -->
+                <div class="live-preview-badge">Live Preview 🔥</div>
+
+                <div class="demo-wrapper">
+
+                    <div class="demo-card" id="demoCardBounds">
+                        <h2 class="demo-title">Erika, Will you go on a movie date with me? <br><em>I bought tickets!</em></h2>
+                        
+                        <div class="demo-details">
+                            <strong>Movie:</strong> <span class="demo-highlight">Insidious: Out of the Further</span><br>
+                            <strong>Date & Time:</strong> October 31, 2026 @ 9:00 PM<br>
+                            <strong>Location:</strong> SM MOA ScreenX<br>
+                            
+                            <div style="margin-top: 15px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
+                                <span style="font-size: 0.75rem; opacity: 0.8; text-transform: uppercase;">Time Remaining</span><br>
+                                <span class="demo-highlight" id="demoCountdownText" style="font-size: 1.1rem; font-weight: 600;">Calculating...</span>
+                            </div>
+                        </div>
+
+                        <div class="demo-buttons">
+                            <button class="demo-btn demo-btn-yes" id="demoYesBtn">Enter the Further</button>
+                            <button class="demo-btn demo-btn-no" id="demoNoBtn">Too scared!</button>
+                        </div>
+
+                        <div class="cheeky-message" id="demoCheekyText">Guess it's a date then! You literally have no choice now. 🤷‍♂️</div>
+                    </div>
+
+                    <div id="demoBlackout" class="demo-blackout"></div>
+                    <div id="demoFog" class="demo-fog"></div>
+                    <img src="./assets/img/cute_ghost.png" id="demoJumpscareImg" class="demo-jumpscare-img" alt="Boo!">
+
+                    <div class="demo-modal" id="demoModal">
+                        <div class="demo-modal-content" id="demoModalContent">
+                            <div class="demo-modal-title">It's a Date!</div>
+                            <p>Best decision you've made all day! 😉💯<br>See you on Halloween! 🍿🎃</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- THEMES SECTION -->
+        <section class="themes-section">
+            <div class="scroll-fade">
+                <h2>Choose Your Experience</h2>
+                <p>Every movie comes with its own unique background, interactive elements, and custom animations.</p>
+            </div>
+            
+            <div class="themes-grid">
+                <!-- Theme 1 -->
+                <div class="theme-card scroll-fade delay-1">
+                    <img src="./assets/img/spiderman_ss.gif" alt="Spiderman Theme" class="theme-img">
+                    <div class="theme-info">
+                        <h3>Spider-man: Brand New Day</h3>
+                        <p>Features dynamic web-shooter animations and smooth interface transitions.</p>
+                    </div>
+                </div>
+                <!-- Theme 2 -->
+                <div class="theme-card scroll-fade delay-2">
+                    <img src="./assets/img/doomsday_ss.gif" alt="Doomsday Theme" class="theme-img">
+                    <div class="theme-info">
+                        <h3>Avengers: Doomsday</h3>
+                        <p>Unleash the magic with rotating spell circles and heroic color palettes.</p>
+                    </div>
+                </div>
+                <!-- Theme 3 -->
+                <div class="theme-card scroll-fade delay-3">
+                    <img src="./assets/img/insidious_ss.gif" alt="Insidious Theme" class="theme-img">
+                    <div class="theme-info">
+                        <h3>Insidious: Out of the Further</h3>
+                        <p>A terrifying horror mode complete with fog, blackouts, and a jumpscare!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section class="how-it-works">
+            <h2 class="scroll-fade">How It Works</h2>
+            
+            <div class="steps-grid">
+                <!-- Step 1 -->
+                <div class="step-card scroll-fade delay-1">
+                    <div class="step-number">1</div>
+                    <svg class="step-icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    <h3>Enter their name</h3>
+                    <p>Tell us who you're inviting, pick your movie theme, and select the perfect date and time.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="step-card scroll-fade delay-2">
+                    <div class="step-number">2</div>
+                    <svg class="step-icon" viewBox="0 0 24 24">
+                        <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                    </svg>
+                    <h3>Send the link</h3>
+                    <p>You get a unique, unguessable link generated instantly. Copy it and send it anywhere.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="step-card scroll-fade delay-3">
+                    <div class="step-number">3</div>
+                    <svg class="step-icon" viewBox="0 0 24 24">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+                    </svg>
+                    <h3>Get notified</h3>
+                    <p>The moment they fall for the trap and click "Yes", you'll get an email notification.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="home-faq-section">
+            <h2 class="scroll-fade">Frequently Asked Questions</h2>
+            
+            <div class="faq-item scroll-fade delay-1">
+                <button class="faq-question">Will my generated link expire? <span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Never! Because our app does not use a database, all your invitation details are encoded directly into the URL itself. It works forever.</p></div>
+            </div>
+            
+            <div class="faq-item scroll-fade delay-2">
+                <button class="faq-question">What happens when the event date passes? <span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>The live countdown timer will automatically switch to displaying "It's Movie Time!", but the beautiful animation will still remain.</p></div>
+            </div>
+
+            <div class="faq-item scroll-fade delay-3">
+                <button class="faq-question">What happens if they try to click "No"? <span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>The "No" button will playfully dodge their cursor, teleporting around the screen until they have no choice but to say Yes!</p></div>
+            </div>
+
+            <div class="faq-item scroll-fade delay-1">
+                <button class="faq-question">Do you save my personal data? <span class="faq-icon">+</span></button>
+                <div class="faq-answer"><p>Absolutely not. We have a strict zero-database architecture. We literally do not have a server to store your data on, making this 100% private.</p></div>
+            </div>
+        </section>
+
+        <!-- DEVELOPER SECTION -->
+        <section class="home-dev-section">
+            <div class="dev-preview-card scroll-fade">
+                <div class="dev-avatar-small">👨‍💻</div>
+                <div class="dev-name-small">Jeleutz</div>
+                <div class="dev-title-small">Creator & Full-Stack Developer</div>
+                
+                <p class="dev-bio-small">
+                    I'm the developer behind InByte. With over 4 years of experience building modern web solutions, I specialize in transforming complex ideas into fully functional, scalable web applications optimized for speed, security, and outstanding user experiences.
+                </p>
+                
+                <a href="mailto:hello@example.com" class="dev-contact-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    Have a question? Let's Chat
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <app-footer></app-footer>
+    <script src="./js/home.js"></script>
+</body>
+</html>

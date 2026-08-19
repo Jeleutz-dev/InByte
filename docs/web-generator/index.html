@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Generator</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/inbyte-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            
+            /* --- PATH (../ goes up one folder to docs, then into assets) --- */
+            background: #2a2a2a url('../assets/wallpaper/darkgenerator_bg.png') no-repeat center center fixed; 
+            background-size: cover;
+            /* --------------------------------------------- */
+            
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+        }
+        .container { 
+            background: white; 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+            max-width: 450px; 
+            width: 100%; 
+        }
+        h2 { margin-top: 0; color: #1a1a1a; text-align: center; }
+        label { font-weight: 500; display: block; margin-top: 1rem; font-size: 0.9rem; color: #555; }
+        
+        input[type="text"], input[type="datetime-local"], textarea, select { 
+            width: 100%; 
+            padding: 10px; 
+            margin-top: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            font-family: inherit; 
+            box-sizing: border-box;
+            background-color: white;
+        }
+        button { 
+            margin-top: 1.5rem; 
+            width: 100%; 
+            padding: 12px; 
+            background: #E23636; 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        button:hover { background: #C62828; transform: scale(1.02); }
+        #resultBox { 
+            margin-top: 1.5rem; 
+            display: none; 
+            background: #fcf9f2; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd;
+        }
+        #resultLink {
+            display: block;
+            margin-top: 10px;
+            word-break: break-all;
+            font-size: 0.85rem;
+            color: #2B5292;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Create a Custom Invite</h2>
+        
+        <label>Invitee's Name</label>
+        <input type="text" id="genName" placeholder="e.g., Erika">
+        
+        <label>Main Question (Optional)</label>
+        <input type="text" id="genMainQ" placeholder="e.g., will you go on a movie date with me?">
+        
+        <label>Sub Text (Optional)</label>
+        <input type="text" id="genSubQ" placeholder="e.g., I bought tickets!">
+        
+        <label>Movie Title</label>
+        <select id="genMovie">
+            <option value="Spiderman: Brand New Day">Spiderman: Brand New Day</option>
+            <option value="Avengers: Doomsday">Avengers: Doomsday</option>
+            <option value="Insidious: Out of the Further">Insidious: Out of the Further</option>
+        </select>
+        
+        <label>Date & Time</label>
+        <input type="datetime-local" id="genDate">
+        
+        <label>Location</label>
+        <input type="text" id="genLoc" placeholder="e.g., SM MOA Director's Club">
+        
+        <label>Pop-up Success Message (Use &lt;br&gt; for new lines)</label>
+        <textarea id="genMsg" rows="3" placeholder="Write your message here! use '<br>' to break to next line"></textarea>
+        
+        <button onclick="generateLink()">Generate Custom Link</button>
+        
+        <div id="resultBox">
+            <strong>Here is your custom URL:</strong><br>
+            <a href="#" id="resultLink" target="_blank"></a>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0;">Copy this link and send it to your date!</p>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            // --- Date Formatting Logic ---
+            let rawDate = document.getElementById('genDate').value;
+            let formattedDate = "";
+            
+            if (rawDate) {
+                let d = new Date(rawDate);
+                let datePart = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                let timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                formattedDate = datePart + " @ " + timePart;
+            }
+
+            // 1. Gather all inputs into a single object
+            const inviteData = {
+                name: document.getElementById('genName').value,
+                movie: document.getElementById('genMovie').value,
+                date: formattedDate,
+                loc: document.getElementById('genLoc').value,
+                msg: document.getElementById('genMsg').value,
+                mainQ: document.getElementById('genMainQ').value,
+                subQ: document.getElementById('genSubQ').value
+            };
+
+            // 2. Clean out any empty values so the link doesn't get unnecessarily long
+            Object.keys(inviteData).forEach(key => {
+                if (!inviteData[key]) delete inviteData[key];
+            });
+
+            // 3. Convert object to a string, make URL safe, and scramble (Base64 Encode)
+            const encodedString = encodeURIComponent(btoa(encodeURIComponent(JSON.stringify(inviteData))));
+
+            // 4. UPDATED: URL now points directly to the 'invite' subfolder!
+            let baseUrl = 'https://jeleutz-dev.github.io/InByte/invite/';
+            
+            const finalUrl = baseUrl + '?invite=' + encodedString;
+            
+            const resultBox = document.getElementById('resultBox');
+            const resultLink = document.getElementById('resultLink');
+            
+            resultBox.style.display = 'block';
+            resultLink.href = finalUrl;
+            resultLink.textContent = finalUrl;
+        }
+    </script>
+</body>
+</html>

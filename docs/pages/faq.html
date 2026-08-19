@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | InByte</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/inbyte-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Go up one folder to access the css folder -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Anti-Flash Script for Dark Mode -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+    
+    <!-- Go up one folder to access the js folder -->
+    <script src="../js/layout.js" defer></script>
+
+    <style>
+        .faq-container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .faq-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-shadow: 0 4px 15px rgba(226, 54, 54, 0.15);
+        }
+
+        .faq-header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- ACCORDION UI --- */
+        .faq-item {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--nav-shadow);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 25px rgba(226, 54, 54, 0.1);
+        }
+
+        .faq-question {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 20px 25px;
+            text-align: left;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .faq-question:hover {
+            color: var(--primary-color);
+        }
+
+        /* The plus/minus icon */
+        .faq-icon {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--primary-color);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            background-color: var(--bg-color); /* Slight contrast from the question box */
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+        }
+
+        .faq-answer p {
+            margin: 0;
+            padding: 0 25px 25px 25px;
+            opacity: 0.85;
+            font-size: 1.05rem;
+        }
+
+        /* Active State (When open) */
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg); /* Turns the '+' into an 'x' */
+            color: #E23636;
+        }
+
+        /* --- ENTRANCE ANIMATIONS --- */
+        @keyframes slideFadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            opacity: 0;
+            animation: slideFadeUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        @media (max-width: 768px) {
+            .faq-header h1 { font-size: 2.2rem; }
+            .faq-question { font-size: 1.05rem; padding: 15px 20px; }
+            .faq-answer p { padding: 0 20px 20px 20px; font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <app-header></app-header>
+
+    <main class="faq-container">
+        
+        <div class="faq-header animate-fade">
+            <h1>Frequently Asked Questions</h1>
+            <p>Everything you need to know about creating and sending your custom movie invitations.</p>
+        </div>
+
+        <!-- FAQ Item 1 -->
+        <div class="faq-item animate-fade delay-1">
+            <button class="faq-question">
+                Will my generated invitation link expire?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p><strong>Never!</strong> Because our app does not use a database, all of your invitation details are safely encoded directly into the URL itself. As long as you have the link saved, your invitation will work forever.</p>
+            </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="faq-item animate-fade delay-2">
+            <button class="faq-question">
+                What happens when the event date passes?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>The invitation will still open and look beautiful! However, instead of counting down the days and hours, the live countdown timer will automatically switch to displaying "It's Movie Time!".</p>
+            </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="faq-item animate-fade delay-3">
+            <button class="faq-question">
+                What happens if they try to click "No"?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>That is the best part! The "No" button is programmed to playfully dodge their cursor. If they manage to chase it down enough times, it will eventually disappear entirely, leaving them with no choice but to say Yes!</p>
+            </div>
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div class="faq-item animate-fade delay-4">
+            <button class="faq-question">
+                Do you save or track my personal data?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>Absolutely not. We have a strict zero-database architecture. Your names, locations, and custom messages are compressed into your specific browser link. We literally do not have a server to store your data on, making this 100% private.</p>
+            </div>
+        </div>
+
+        <!-- FAQ Item 5 -->
+        <div class="faq-item animate-fade delay-5">
+            <button class="faq-question">
+                What is the "Insidious" Horror Theme?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>If you select the horror movie option in the generator, the invitation transforms! The background becomes ominous, the buttons change to "Enter the Further" and "Too Scared", and clicking Yes triggers a custom blackout and jumpscare animation.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <app-footer></app-footer>
+
+    <!-- --- ACCORDION JAVASCRIPT LOGIC --- -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const questionBtn = item.querySelector('.faq-question');
+                const answerBox = item.querySelector('.faq-answer');
+
+                questionBtn.addEventListener('click', () => {
+                    // Check if this item is already open
+                    const isActive = item.classList.contains('active');
+
+                    // OPTIONAL: Close all other open FAQs before opening the new one
+                    faqItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.faq-answer').style.maxHeight = null;
+                    });
+
+                    // If it wasn't active, open it now!
+                    if (!isActive) {
+                        item.classList.add('active');
+                        // Calculate the exact height needed for the text so it slides perfectly
+                        answerBox.style.maxHeight = answerBox.scrollHeight + "px";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | InByte</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/inbyte-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Go up one folder to access the css folder -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Anti-Flash Script for Dark Mode -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+    
+    <!-- Go up one folder to access the js folder -->
+    <script src="../js/layout.js" defer></script>
+
+    <style>
+        /* Specific styles for the About Page */
+        .about-container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+            overflow: hidden; /* Prevents animation overflow */
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .about-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-shadow: 0 4px 15px rgba(226, 54, 54, 0.2);
+        }
+
+        .about-header p {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Two-column layout for the story and tech sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        /* Interactive Content Cards */
+        .content-block {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px var(--nav-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+        }
+
+        /* Gradient top border effect on hover */
+        .content-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), #ff8a8a);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .content-block:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(226, 54, 54, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .content-block:hover::before {
+            opacity: 1;
+        }
+
+        .content-block h2 {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-block ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .content-block li {
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        /* Premium Developer Profile Section */
+        .developer-section {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px var(--nav-shadow);
+            position: relative;
+            transition: transform 0.4s ease;
+        }
+
+        .developer-section:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 50px rgba(226, 54, 54, 0.1);
+        }
+
+        /* Floating & Pulsing Avatar */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .dev-avatar {
+            width: 130px;
+            height: 130px;
+            background-color: var(--hover-bg);
+            border-radius: 50%;
+            margin: 0 auto 25px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            border: 4px solid var(--primary-color);
+            box-shadow: 0 0 20px rgba(226, 54, 54, 0.3);
+            animation: float 4s ease-in-out infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dev-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 40px rgba(226, 54, 54, 0.5);
+            animation-play-state: paused;
+        }
+
+        .dev-name {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .dev-title {
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .dev-bio {
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+            font-size: 1.05rem;
+        }
+
+        /* --- ENTRANCE ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            opacity: 0;
+            animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Staggered animation delays */
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .about-header h1 { font-size: 2.5rem; }
+            .content-block { padding: 30px; }
+            .developer-section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <app-header></app-header>
+
+    <main class="about-container">
+        
+        <!-- Header Animation -->
+        <div class="about-header animate-fade">
+            <h1>Making RSVPs Fun Again</h1>
+            <p>InByte transforms the boring "Do you want to go out?" text message into a highly interactive, personalized web experience.</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Project Story Animation (Left side) -->
+            <div class="content-block animate-fade delay-1">
+                <h2>✨ The Project</h2>
+                <p>Asking someone out on a date should be memorable. This project was born out of a desire to create a playful, creative way to invite someone to the movies.</p>
+                <p>Every digital invitation features:</p>
+                <ul>
+                    <li><strong>Interactive Themes:</strong> Visuals and animations perfectly matched to the movie choice, from Marvel web-shooters to Doctor Doom portals.</li>
+                    <li><strong>The "Runaway" No Button:</strong> A cheeky UI element that playfully dodges the user's cursor while taunting them, making it practically impossible to say no!</li>
+                    <li><strong>Horror Mode:</strong> An intense, custom <em>Insidious</em> theme featuring a blackout screen, creeping teal fog, and a cinematic jumpscare with custom audio.</li>
+                    <li><strong>Live Countdowns:</strong> Real-time event countdowns and embedded Google Maps integration.</li>
+                </ul>
+            </div>
+
+            <!-- The Technology Animation (Right side) -->
+            <div class="content-block animate-fade delay-2">
+                <h2>🚀 The Technology</h2>
+                <p>InByte is a masterclass in <strong>client-side architecture</strong>. To ensure complete privacy and zero hosting costs, this application operates entirely without a backend database.</p>
+                <ul>
+                    <li><strong>Stateless Generation:</strong> When an invite is created, all text, dates, and locations are compressed and safely encoded directly into the URL using Base64 formatting.</li>
+                    <li><strong>Zero Data Tracking:</strong> Because the data lives entirely inside the link, user privacy is guaranteed. If the link is deleted, the data is gone forever.</li>
+                    <li><strong>Custom Web Components:</strong> Built using vanilla JavaScript and modern CSS to create a lightweight, blazing-fast responsive layout that seamlessly supports light and dark modes.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Developer Profile Animation -->
+        <div class="developer-section animate-fade delay-3">
+            <div class="dev-avatar">👨‍💻</div>
+            <div class="dev-name">Jeleutz</div>
+            <div class="dev-title">Full-Stack Web Developer</div>
+            
+            <div class="dev-bio">
+                <p>Hi, I'm the developer behind InByte! I go by <strong>Jeleutz</strong> online, and I bring over <strong>4 years of professional experience</strong> in engineering dynamic, high-performance web applications.</p>
+                
+                <p>I specialize in bridging the gap between elegant design and complex functionality. By combining powerful PHP and Laravel back-ends with sleek HTML, CSS, and JavaScript front-ends, I transform ideas into scalable solutions. Whether developing custom web apps, robust e-commerce platforms, or impactful business websites, my focus remains steadfast on speed, security, and delivering an outstanding user experience.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <app-footer></app-footer>
+
+</body>
+</html>

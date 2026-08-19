@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #2a2a2a; /* Dark background to match theme */
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px;
+        }
+        .container { 
+            background: white; 
+            padding: 2.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+            max-width: 450px; 
+            width: 100%; 
+        }
+        h2 { margin-top: 0; color: #1a1a1a; text-align: center; }
+        label { font-weight: 500; display: block; margin-top: 1rem; font-size: 0.9rem; color: #555; }
+        input, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            margin-top: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            font-family: inherit; 
+            box-sizing: border-box;
+        }
+        button { 
+            margin-top: 1.5rem; 
+            width: 100%; 
+            padding: 12px; 
+            background: #E23636; 
+            color: white; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        button:hover { background: #C62828; transform: scale(1.02); }
+        #resultBox { 
+            margin-top: 1.5rem; 
+            display: none; 
+            background: #fcf9f2; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #ddd;
+        }
+        #resultLink {
+            display: block;
+            margin-top: 10px;
+            word-break: break-all;
+            font-size: 0.85rem;
+            color: #2B5292;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Create a Custom Invite</h2>
+        
+        <label>Invitee's Name</label>
+        <input type="text" id="genName" placeholder="e.g., Sarah">
+        
+        <label>Movie Title</label>
+        <input type="text" id="genMovie" value="Spiderman: Brand New Day">
+        
+        <label>Date & Time</label>
+        <input type="text" id="genDate" value="August 1, 2026 @ 9:15 PM">
+        
+        <label>Location</label>
+        <input type="text" id="genLoc" value="SM MOA ScreenX">
+        
+        <label>Pop-up Success Message (Use <br> for new lines)</label>
+        <textarea id="genMsg" rows="3">Best decision you've made all day!<br>See you on the 1st of August!</textarea>
+        
+        <button onclick="generateLink()">Generate Custom Link</button>
+        
+        <div id="resultBox">
+            <strong>Here is your custom URL:</strong><br>
+            <a href="#" id="resultLink" target="_blank"></a>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0;">Copy this link and send it to your date!</p>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            // 1. Grab values from the inputs
+            const name = document.getElementById('genName').value;
+            const movie = document.getElementById('genMovie').value;
+            const date = document.getElementById('genDate').value;
+            const loc = document.getElementById('genLoc').value;
+            const msg = document.getElementById('genMsg').value;
+
+            // 2. Safely encode them for a URL
+            const params = new URLSearchParams();
+            if(name) params.append('name', name);
+            if(movie) params.append('movie', movie);
+            if(date) params.append('date', date);
+            if(loc) params.append('loc', loc);
+            if(msg) params.append('msg', msg);
+
+            // 3. Figure out the base URL (so it works on localhost or GitHub pages automatically)
+            let baseUrl = window.location.href.split('generator.html')[0];
+            
+            // 4. Combine them
+            const finalUrl = baseUrl + '?' + params.toString();
+            
+            // 5. Display the result
+            const resultBox = document.getElementById('resultBox');
+            const resultLink = document.getElementById('resultLink');
+            
+            resultBox.style.display = 'block';
+            resultLink.href = finalUrl;
+            resultLink.textContent = finalUrl;
+        }
+    </script>
+</body>
+</html>

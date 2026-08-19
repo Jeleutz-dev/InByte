@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Date RSVP</title>
+    <!-- Dynamic Favicon (Defaults to Spiderman) -->
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/spideyyy.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box; 
+            
+            /* Default Spiderman Background */
+            background-image: url('../assets/wallpaper/spiderman_bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed; 
+            
+            font-family: 'Poppins', sans-serif;
+            color: #e0e0e0; 
+            overflow-x: hidden; 
+        }
+
+        .card {
+            background: rgba(255,255,255,.08);
+            padding: 3rem 4rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            width: 100%; 
+            max-width: 500px;
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,.15);
+            box-sizing: border-box;
+            margin: 20px 0; 
+        }
+
+        /* --- MAIN QUESTION STYLES --- */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem; 
+            color: #ffffff;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 15px rgba(255, 255, 255, 0.15);
+        }
+
+        /* --- SUB QUESTION STYLES --- */
+        h1 em {
+            font-size: 1.4rem; 
+            font-family: 'Playfair Display', serif; 
+            font-style: italic;
+            font-weight: 400;
+            color: #d1d1d1; 
+            display: block; 
+            margin-top: 8px; 
+            letter-spacing: 0.5px;
+        }
+
+        .details {
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #f5f5f5;
+        }
+
+        .highlight {
+            font-weight: 500;
+            color: #ff4d4d; /* Spiderman Red */
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* FIX: Reverted to generic button to restore the smooth "No" dodge animation! */
+        button {
+            padding: 12px 36px;
+            font-size: 1.1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn-yes {
+            background-color: #E23636; 
+            color: white;
+            box-shadow: 0 4px 15px rgba(226, 54, 54, 0.3);
+        }
+
+        .btn-yes:hover {
+            background-color: #C62828;
+            transform: scale(1.05);
+        }
+
+        .btn-no {
+            background-color: #2B5292; 
+            color: white;
+            /* Smooth glide animation is back! */
+            transition: left 0.4s ease-out, top 0.4s ease-out, transform 0.2s, background-color 0.2s;
+            z-index: 50;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Animations Elements */
+        .web-shoot {
+            position: fixed;
+            top: 58%;
+            left: 48%;
+            width: 100vw; 
+            height: 100vh;
+            object-fit: cover;
+            z-index: 2000; 
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .magic-circle-shoot, .magic-circle-shoot-right {
+            position: fixed;
+            top: 75%; 
+            width: 80vw; 
+            height: 80vh;
+            object-fit: contain; 
+            z-index: 2000; 
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .magic-circle-shoot { left: 25%; }
+        .magic-circle-shoot-right { left: 75%; }
+
+        .web-splat {
+            position: absolute;
+            top: 58%;
+            left: 48%;
+            width: 100vw; 
+            height: 100vh;
+            object-fit: cover;
+            z-index: 3; 
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* --- INTENSE JUMPSCARE STYLES --- */
+        .blackout-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            z-index: 10;
+            opacity: 0; 
+            pointer-events: none;
+        }
+
+        .teal-fog {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(13, 89, 89, 0.5) 0%, rgba(4, 26, 26, 0.7) 40%, transparent 70%);
+            z-index: 15; 
+            opacity: 0;
+            pointer-events: none;
+            filter: blur(30px);
+        }
+
+        .jumpscare-img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 20; 
+            pointer-events: none;
+            opacity: 0;
+            width: 80vw;
+            max-width: 400px; 
+            filter: drop-shadow(0 0 25px rgba(0, 150, 150, 0.6));
+        }
+
+        .modal-content {
+            position: relative;
+            z-index: 30; 
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px); 
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%; 
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5); 
+            color: #f5f5f5; 
+            opacity: 0; 
+            box-sizing: border-box;
+        }
+
+        /* --- THE ANIMATION TIMELINE --- */
+        @keyframes shootWeb {
+            0% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @keyframes splatIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @keyframes pullOutWeb {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-70%, 60%) scale(5); opacity: 0; }
+        }
+        @keyframes pullModal {
+            0% { transform: scale(0.2); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes magicPopRotate {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.1) rotate(90deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(720deg); opacity: 1; }
+        }
+        @keyframes magicVanish {
+            0% { transform: translate(-50%, -50%) scale(1) rotate(720deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(900deg); opacity: 0; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- INTENSE JUMPSCARE ANIMATIONS --- */
+        @keyframes flickerBlack {
+            0% { opacity: 0; }
+            15% { opacity: 0.8; }
+            30% { opacity: 0; }
+            45% { opacity: 0.9; }
+            60% { opacity: 0.2; }
+            80% { opacity: 1; }
+            90% { opacity: 0.5; }
+            100% { opacity: 1; } 
+        }
+        
+        @keyframes driftFog {
+            0% { opacity: 0; transform: scale(1) translate(0, 0); }
+            20% { opacity: 1; transform: scale(1.1) translate(-2%, 2%); }
+            80% { opacity: 1; transform: scale(1.3) translate(2%, -2%); }
+            100% { opacity: 0; transform: scale(1.5) translate(-4%, 4%); }
+        }
+
+        @keyframes fadeBlackout {
+            0% { opacity: 1; }
+            100% { opacity: 0; } 
+        }
+
+        @keyframes snapJumpscare {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; } 
+            20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 
+            75% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 
+            100% { transform: translate(-50%, -50%) scale(5); opacity: 0; } 
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff4d4d; 
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+        }
+
+        /* --- DOOMSDAY THEME OVERRIDES --- */
+        body.doomsday-theme {
+            background-image: url('../assets/wallpaper/doomsday_bg.png') !important;
+        }
+        .doomsday-theme .highlight {
+            color: #2ecc71;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+        .doomsday-theme .btn-yes {
+            background-color: #1e5631; 
+            box-shadow: 0 4px 15px rgba(30, 86, 49, 0.3);
+        }
+        .doomsday-theme .btn-yes:hover {
+            background-color: #143d22;
+        }
+        .doomsday-theme .modal-title {
+            color: #2ecc71;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+
+        /* --- INSIDIOUS THEME OVERRIDES --- */
+        body.insidious-theme {
+            background-image: url('../assets/wallpaper/insidious_bg.png') !important;
+        }
+        .insidious-theme .highlight {
+            color: #8b0000; 
+            text-shadow: 0 0 12px rgba(139, 0, 0, 0.6);
+        }
+        .insidious-theme .btn-yes {
+            background-color: #4a0000; 
+            box-shadow: 0 4px 15px rgba(74, 0, 0, 0.5);
+        }
+        .insidious-theme .btn-yes:hover {
+            background-color: #2b0000;
+        }
+        .insidious-theme .modal-title {
+            color: #8b0000;
+            text-shadow: 0 0 12px rgba(139, 0, 0, 0.6);
+        }
+        .insidious-theme .btn-no {
+            background-color: #333333; 
+        }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 600px) {
+            body { padding: 15px; }
+            .card { padding: 2rem 1.5rem; }
+            h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+            h1 em { font-size: 1.2rem; margin-top: 5px; }
+            .details { font-size: 0.95rem; }
+            .buttons { gap: 10px; }
+            button { padding: 12px 24px; font-size: 1rem; }
+            .modal-content { padding: 2rem 1.5rem; }
+            .modal-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AUDIO ELEMENT FOR THE SCREAM FX -->
+    <audio id="screamSound">
+        <!-- Make sure your scream sound file is exactly named scream.mp3 -->
+        <source src="../assets/effects/scream.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+        <h1 id="inviteTitle">  <br><em> </em></h1>
+        <!-- <h1 id="inviteTitle">` <br><em>I bought tickets!</em></h1> -->
+        
+        <div class="details">
+            <!-- <p><strong>Movie:</strong> <span class="highlight" id="movieName">Spiderman: Brand New Day</span></p> -->
+            <p><strong>Movie:</strong> <span class="highlight" id="movieName"></span></p>
+            <p id="dateLine"><strong>Date & Time:</strong> <span id="dateTime">July 31, 2026 @ 9:15 PM</span></p>
+            <p id="locLine"><strong>Location:</strong> <span id="locationPlace">SM MOA ScreenX</span></p>
+            
+            <div id="countdownContainer" style="display: none; margin: 20px auto 0 auto; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                <span style="font-size: 0.9rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Time Remaining</span><br>
+                <span id="countdownText" class="highlight" style="font-size: 1.3rem; font-weight: 600;"></span>
+            </div>
+
+            <div id="mapContainer" style="display: none; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <iframe id="miniMap" width="100%" height="150" frameborder="0" style="border:0; display: block;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-yes" id="yesBtn">Yes</button>
+            <button class="btn-no" id="noBtn">No</button>
+        </div>
+        
+        <div id="cheekyText" style="display: none; margin-top: 20px; font-size: 0.95rem; font-style: italic; color: #f5f5f5; opacity: 0.9; animation: fadeIn 0.5s ease-out forwards;"></div>
+    </div>
+
+    <img src="../assets/wallpaper/web1.png" id="web1" class="web-shoot" alt="Web String">
+    <img src="../assets/img/magic_effect.png" id="magic2" class="magic-circle-shoot-right" alt="Magic Circle 2">
+
+    <div class="modal-overlay" id="successModal">
+        <img src="../assets/wallpaper/web2.png" id="web2" class="web-splat" alt="Web Splat">
+        
+        <div id="blackout" class="blackout-screen"></div>
+        <div id="tealFog" class="teal-fog"></div>
+        <img src="../assets/img/cute_ghost.png" id="jumpscareImage" class="jumpscare-img" alt="Boo!">
+
+        <div class="modal-content">
+            <div class="modal-title">It's a Date!</div>
+            <p id="modalMessage">Best decision you've made all day!<br>See you on the 1st of August!</p>
+        </div>
+    </div>
+    
+    <script>
+        // --- URL PARAMETER LOGIC ---
+        const params = new URLSearchParams(window.location.search);
+        let customData = {};
+
+        if (params.has('invite')) {
+            try {
+                const safeBase64 = params.get('invite').replace(/ /g, '+'); 
+                const decodedString = decodeURIComponent(atob(safeBase64));
+                customData = JSON.parse(decodedString);
+            } catch (e) {
+                console.error("Invalid invite code");
+            }
+        } else {
+            customData = {
+                name: params.get('name'), movie: params.get('movie'),
+                date: params.get('date'), loc: params.get('loc'),
+                msg: params.get('msg'), mainQ: params.get('mainQ'), subQ: params.get('subQ')
+            };
+        }
+        
+        // --- FIXED: Custom Question Logic Using "??" ---
+        let mainQ = customData.mainQ ?? "";
+        let subQ = customData.subQ ?? "";
+
+        // Ensure we don't render empty tags if they are blank
+        let nameStr = (customData.name && customData.name.trim() !== "") ? customData.name + ", " : "";
+        let subQStr = (subQ && subQ.trim() !== "") ? "<br><em>" + subQ + "</em>" : "";
+
+        document.getElementById('inviteTitle').innerHTML = nameStr + mainQ + subQStr;
+
+        // --- THEME SWAP LOGIC ---
+        const movieChoice = customData.movie;
+        let isDoomsday = false; 
+        let isInsidious = false; 
+
+        if (movieChoice) {
+            document.getElementById('movieName').textContent = movieChoice;
+            
+            if (movieChoice === 'Avengers: Doomsday') {
+                isDoomsday = true; 
+                document.body.classList.add('doomsday-theme');
+                document.getElementById('pageIcon').href = "../assets/dr-doom.png";
+
+                const web1 = document.getElementById('web1');
+                web1.src = "../assets/img/magic_effect.png";
+                web1.className = "magic-circle-shoot"; 
+            } 
+            else if (movieChoice === 'Insidious: Out of the Further') {
+                isInsidious = true;
+                document.body.classList.add('insidious-theme');
+                document.getElementById('pageIcon').href = "../assets/ghost.png";
+
+                // --- Change button text for the horror theme! ---
+                document.getElementById('yesBtn').textContent = "Enter the Further";
+                document.getElementById('noBtn').textContent = "Too scared!";
+            }
+        }
+
+        // --- DATE, LOCATION & COUNTDOWN ---
+        if (Object.keys(customData).length > 0 || window.location.search) {
+            const dateVal = customData.date;
+            if (!dateVal || dateVal.trim() === "") {
+                document.getElementById('dateLine').style.display = 'none';
+            } else {
+                document.getElementById('dateTime').textContent = dateVal;
+                
+                let cleanDateString = dateVal.replace('@', '').trim();
+                let countDownDate = new Date(cleanDateString).getTime();
+
+                if (!isNaN(countDownDate)) {
+                    document.getElementById('countdownContainer').style.display = 'block';
+
+                    let x = setInterval(function() {
+                        let now = new Date().getTime();
+                        let distance = countDownDate - now;
+
+                        if (distance < 0) {
+                            clearInterval(x);
+                            document.getElementById('countdownText').innerHTML = "It's Movie Time!";
+                        } else {
+                            let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                            document.getElementById('countdownText').innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+                        }
+                    }, 1000);
+                }
+            }
+
+            const locVal = customData.loc;
+            if (!locVal || locVal.trim() === "") {
+                document.getElementById('locLine').style.display = 'none';
+            } else {
+                document.getElementById('locationPlace').textContent = locVal;
+                document.getElementById('mapContainer').style.display = 'block';
+                document.getElementById('miniMap').src = 'https://maps.google.com/maps?q=' + encodeURIComponent(locVal) + '&t=m&z=14&output=embed';
+            }
+        }
+        
+        // --- FIXED: Modal Message Logic ---
+        if (customData.msg !== undefined && customData.msg !== null) {
+            document.getElementById('modalMessage').innerHTML = customData.msg;
+        }
+        
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const modal = document.getElementById('successModal');
+        const web1 = document.getElementById('web1');
+        const web2 = document.getElementById('web2');
+        const magic2 = document.getElementById('magic2'); 
+        const blackout = document.getElementById('blackout');
+        const tealFog = document.getElementById('tealFog'); 
+        const modalContent = document.querySelector('.modal-content');
+        const jumpscareImg = document.getElementById('jumpscareImage');
+        const screamSound = document.getElementById('screamSound');
+        
+        // --- RANDOMIZED BUTTON LOGIC ---
+        const cheekyText = document.getElementById('cheekyText');
+        let dodgeCount = 0;
+
+        const finalCheekyPhrases = [
+            "The universe has spoken. Just click 'Yes' already! ✨",
+            "Resistance is futile. See you on our date! 😎",
+            "I deleted the 'No' button. You're stuck with me! 💖",
+            "Guess it's a date then! You literally have no choice now. 🤷‍♂️",
+            "Well, this is awkward... just click Yes so we can move on. 😂",
+            "Checkmate. See you at the movies! 🎬",
+            "I admire your persistence, but we're still going. 🍿"
+        ];
+
+        let randomDodges = [
+            "Too slow! 🐢", "Catch me! 🦋", "Nope! 🏃💨", "Missed! 😛", "Oops! 🙈"
+        ];
+
+        for (let i = randomDodges.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [randomDodges[i], randomDodges[j]] = [randomDodges[j], randomDodges[i]];
+        }
+        randomDodges.push("I'm tired... 🪫");
+
+        let splatTimer, pullTimer;
+
+        function runaway(e) {
+            if (e) e.preventDefault();
+
+            if (dodgeCount >= 6) {
+                noBtn.style.display = 'none'; 
+                const randomText = finalCheekyPhrases[Math.floor(Math.random() * finalCheekyPhrases.length)];
+                cheekyText.textContent = randomText;
+                cheekyText.style.display = 'block'; 
+                return; 
+            }
+
+            noBtn.textContent = randomDodges[dodgeCount];
+            dodgeCount++; 
+
+            if (noBtn.style.position !== 'fixed') {
+                const rect = noBtn.getBoundingClientRect();
+                document.body.appendChild(noBtn);
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = rect.left + 'px';
+                noBtn.style.top = rect.top + 'px';
+                noBtn.getBoundingClientRect(); // Forces layout recalculation to ensure transition works
+            }
+
+            const maxX = window.innerWidth - noBtn.offsetWidth;
+            const maxY = window.innerHeight - noBtn.offsetHeight;
+            
+            const randomX = Math.max(0, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(0, Math.floor(Math.random() * maxY));
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        noBtn.addEventListener('mouseover', runaway);
+        noBtn.addEventListener('touchstart', runaway);
+        noBtn.addEventListener('click', runaway);
+
+        // --- THE "YES" ACTION ---
+        yesBtn.addEventListener('click', function() {
+            web1.style.animation = 'none';
+            web2.style.animation = 'none';
+            magic2.style.animation = 'none';
+            modalContent.style.animation = 'none';
+            jumpscareImg.style.animation = 'none'; 
+            blackout.style.animation = 'none';
+            tealFog.style.animation = 'none';
+            
+            void web1.offsetWidth; 
+            void magic2.offsetWidth;
+
+            if (isInsidious) {
+                modal.style.transition = 'none'; 
+                modal.classList.add('active');
+
+                // 1. Light flicker
+                blackout.style.animation = 'flickerBlack 0.8s ease-in-out forwards';
+                
+                // 2. Teal fog
+                setTimeout(() => {
+                    tealFog.style.animation = 'driftFog 2.5s ease-in-out forwards';
+                }, 400);
+
+                // 3. JUMPSCARE & SCREAM!
+                splatTimer = setTimeout(() => {
+                    screamSound.currentTime = 0; 
+                    screamSound.play().catch(e => console.log("Audio block: user didn't interact properly."));
+                    jumpscareImg.style.animation = 'snapJumpscare 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                }, 800);
+                
+                // 4. Fade to modal
+                pullTimer = setTimeout(() => {
+                    blackout.style.animation = 'fadeBlackout 0.8s ease-out forwards';
+                    modalContent.style.animation = 'pullModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                }, 1800); 
+
+            } else {
+                modal.style.transition = 'opacity 0.4s ease, visibility 0.4s ease';
+                modal.classList.add('active');
+
+                if (isDoomsday) {
+                    web1.style.animation = 'magicPopRotate 1.5s ease-out forwards';
+                    magic2.style.animation = 'magicPopRotate 1.5s ease-out forwards'; 
+                    
+                    splatTimer = setTimeout(() => {
+                        web1.style.animation = 'magicVanish 0.3s ease-in forwards';
+                        magic2.style.animation = 'magicVanish 0.3s ease-in forwards'; 
+                        
+                        pullTimer = setTimeout(() => {
+                            modalContent.style.animation = 'pullModal 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                        }, 300); 
+                    }, 1500); 
+                } 
+                else {
+                    web1.style.animation = 'shootWeb 0.25s ease-out forwards';
+                    splatTimer = setTimeout(() => {
+                        web2.style.animation = 'splatIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                        pullTimer = setTimeout(() => {
+                            web1.style.animation = 'pullOutWeb 0.25s ease-in forwards';
+                            web2.style.animation = 'pullOutWeb 0.25s ease-in forwards';
+                            modalContent.style.animation = 'pullModal 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                        }, 250); 
+                    }, 250); 
+                }
+            }
+        });
+
+        // Close Modal
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                clearTimeout(splatTimer);
+                clearTimeout(pullTimer);
+                web1.style.animation = 'none';
+                web2.style.animation = 'none';
+                magic2.style.animation = 'none'; 
+                modalContent.style.animation = 'none';
+                jumpscareImg.style.animation = 'none'; 
+                blackout.style.animation = 'none';
+                tealFog.style.animation = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

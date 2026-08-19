@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Notice | InByte</title>
+    <link rel="icon" id="pageIcon" type="image/png" href="../assets/inbyte-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+    <script src="../js/layout.js" defer></script>
+
+    <style>
+        .page-container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+            overflow: hidden;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .legal-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            text-shadow: 0 4px 15px rgba(226, 54, 54, 0.15);
+        }
+
+        .last-updated {
+            font-size: 0.95rem;
+            opacity: 0.6;
+            font-style: italic;
+            display: inline-block;
+            background: var(--hover-bg);
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+
+        /* Reading Focus Interactive Cards */
+        .legal-section {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid transparent; /* Placeholder for hover effect */
+            border-radius: 16px;
+            padding: 30px 40px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px var(--nav-shadow);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .legal-section:hover {
+            transform: translateX(8px);
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 12px 30px rgba(226, 54, 54, 0.1);
+        }
+
+        .legal-section h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legal-section p, .legal-section li {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            margin-bottom: 15px;
+        }
+
+        .legal-section ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+
+        .legal-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .legal-link:hover {
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+
+        /* --- ENTRANCE ANIMATIONS --- */
+        @keyframes slideFadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            opacity: 0;
+            animation: slideFadeUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+
+        @media (max-width: 768px) {
+            .legal-header h1 { font-size: 2.2rem; }
+            .legal-section { padding: 25px 20px; }
+            .legal-section:hover { transform: translateX(4px); }
+        }
+    </style>
+</head>
+<body>
+
+    <app-header></app-header>
+
+    <main class="page-container">
+        
+        <div class="legal-header animate-fade">
+            <h1>Privacy Notice</h1>
+            <span class="last-updated">Last Updated: August 18, 2026</span>
+        </div>
+
+        <div class="legal-section animate-fade delay-1">
+            <p style="margin:0;">At InByte, we take your privacy seriously. This Privacy Notice explains how we collect, use, and protect your information when you use our digital invitation generator and RSVP services.</p>
+        </div>
+
+        <div class="legal-section animate-fade delay-2">
+            <h2>1. How Your Data is Handled</h2>
+            <p>InByte is built with a privacy-first architecture. <strong>We do not use backend databases or remote servers to store your personal invitation data.</strong> When you create an invitation, all the details you input are mathematically encoded (via Base64 encryption) directly into the unique URL generated for you.</p>
+            <p style="margin:0;">Because your data lives exclusively inside the link you share, our team cannot read, access, sell, monitor, or delete your invitation data. It remains entirely in your control.</p>
+        </div>
+
+        <div class="legal-section animate-fade delay-3">
+            <h2>2. Information You Provide</h2>
+            <p>When you use our generator, you may input the following details:</p>
+            <ul>
+                <li>Invitee names</li>
+                <li>Event dates and times</li>
+                <li>Location names</li>
+                <li>Custom personal messages</li>
+            </ul>
+        </div>
+
+        <div class="legal-section animate-fade delay-4">
+            <h2>3. Local Storage and Tracking</h2>
+            <p style="margin:0;">We do not use invasive tracking cookies or third-party advertising trackers. We utilize your browser's <strong>Local Storage</strong> strictly to save your User Interface preferences. Specifically, we store a small, anonymous text flag so our application remembers your preferred visual display mode during future visits.</p>
+        </div>
+
+        <div class="legal-section animate-fade delay-5">
+            <h2>4. Third-Party Integrations</h2>
+            <p>To provide you with a seamless and interactive experience, our pages utilize standard third-party services:</p>
+            <ul>
+                <li><strong>Google Maps:</strong> We embed a standard Google Maps iframe to display your selected event location visually.</li>
+                <li><strong>GitHub Pages:</strong> Our static website files are hosted securely via GitHub Pages, which may temporarily log standard web request data for security routing.</li>
+            </ul>
+        </div>
+
+        <div class="legal-section animate-fade delay-6">
+            <h2>5. Your Responsibilities</h2>
+            <p style="margin:0;">Because your invitation data is stored directly in the URL rather than behind a password-protected account, you are responsible for keeping your generated links secure. We highly advise against posting your generated invitation links on public forums or social media feeds if you do not want strangers to view your private event details.</p>
+        </div>
+
+    </main>
+
+    <app-footer></app-footer>
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+/* --- CSS VARIABLES FOR LIGHT/DARK MODE --- */
+:root {
+    --bg-color: linear-gradient(135deg, #ffc5e0 0%, #ffffff 50%, #83e2fe 100%);
+    --text-color: #2b2b2b;
+    --nav-bg: #ffffff;
+    
+    /* The new gradient specifically for the Top Bar */
+    --topbar-bg: linear-gradient(90deg, #fceff5 0%, #ffffff 50%, #fceff5 100%);
+    
+    --nav-shadow: rgba(0, 0, 0, 0.05);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --primary-color: #E23636; 
+    --btn-text: #ffffff;
+    --hover-bg: #f0f0f0;
+    --neon-glow: 0 0 15px rgba(241, 193, 200, 0.6), 0 0 30px rgba(226, 54, 54, 0.2);
+}
+
+.dark-mode {
+    --bg-color: linear-gradient(135deg, #121212 0%, #110a0a 50%, #080102 100%);
+    --text-color: #f5f5f5;
+    --nav-bg: #1e1e1e;
+    
+    /* Keeps the top bar dark when in dark mode */
+    --topbar-bg: #1e1e1e; 
+    
+    --nav-shadow: rgba(0, 0, 0, 0.5);
+    --border-color: rgba(255, 255, 255, 0.05);
+    --primary-color: #E23636; 
+    --hover-bg: #2a2a2a;
+    --neon-glow: 0 0 20px rgba(241, 193, 200, 0.3), 0 0 40px rgba(226, 54, 54, 0.4);
+}
+
+/* --- BACKGROUND ANIMATION --- */
+@keyframes gradientPan {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- GLOBAL LAYOUT STYLES --- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    
+    /* The Background Setup */
+    background: var(--bg-color);
+    background-attachment: fixed; /* Locks the background in place when scrolling */
+    background-size: 300% 300%; /* Stretches the gradient so it has room to move */
+    animation: gradientPan 15s ease infinite; /* Moves the gradient slowly over 15 seconds */
+    
+    transition: color 0.3s ease;
+    
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+
+/* Allows the main content to stretch and fill empty space */
+main {
+    flex: 1; 
+}
+
+/* --- APP HEADER (Required for sticky custom elements) --- */
+app-header {
+    display: block;
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+}
+
+/* --- NAVIGATION BAR --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* Increased horizontal padding to pull the sides inward */
+    padding: 12px 80px; 
+    
+    background: var(--topbar-bg);
+    box-shadow: 0 10px 30px var(--nav-shadow), var(--neon-glow);
+    
+    /* The Floating Pill Effect */
+    position: relative; 
+    margin: 0 auto 30px auto;
+    width: 90%;
+    max-width: 1800px;
+    border-radius: 50px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Left Section */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    z-index: 1001; /* Keeps logo clickable when mobile menu is open */
+}
+
+.nav-logo-img {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
+    /* Makes the logo hover gently */
+    animation: floatSoft 3.5s ease-in-out infinite; 
+}
+
+.logo-sparkle {
+    display: inline-block;
+    margin-left: 5px;
+    /* Makes the sparkle bounce and spin slightly */
+    animation: sparkleFloat 2.5s ease-in-out infinite; 
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-color);
+}
+
+/* Hide hamburger on desktop */
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Nav Menu Wrapper */
+.nav-menu {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end; /* Pushes the Login/Theme buttons to the far right */
+    align-items: center;
+}
+
+/* Center Section */
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-center a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.nav-center a:hover {
+    color: var(--primary-color);
+}
+
+/* Right Section */
+.nav-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.login-btn {
+    background-color: transparent;
+    border: 2px solid var(--text-color);
+    color: var(--text-color);
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.login-btn:hover {
+    background-color: var(--text-color);
+    color: var(--bg-color) !important;
+}
+
+.theme-toggle {
+    background: var(--hover-bg);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* --- BOTTOM BAR (FOOTER) --- */
+.footer {
+    background-color: var(--nav-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 40px 5% 20px 5%;
+    text-align: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 400;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+    color: var(--primary-color);
+}
+
+.footer-copy {
+    font-size: 0.85rem;
+    opacity: 0.5;
+    margin: 0;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    .navbar {
+        width: 92%;
+        padding: 12px 20px;
+    }
+
+    /* Show the hamburger icon */
+    .hamburger {
+        display: flex;
+    }
+
+    /* Turn the menu into a dropdown drawer */
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin-top: 10px;
+        background-color: var(--nav-bg);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px var(--nav-shadow);
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+        border: 1px solid var(--border-color);
+        
+        /* Hide by default with a smooth slide-down animation */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+
+    /* When the JavaScript adds 'active', show the menu */
+    .nav-menu.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Reset and stack links vertically for mobile */
+    .nav-center, .nav-right {
+        position: static;
+        transform: none;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        gap: 20px;
+    }
+
+    /* Add a divider between the links and the login/theme buttons */
+    .nav-right {
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .footer-links {
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+}
+
+/* --- SCROLL TO TOP BUTTON --- */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(226, 54, 54, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+    z-index: 999;
+}
+
+/* The class added via JS when scrolled down */
+.scroll-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+    background-color: #C62828;
+    transform: translateY(-5px);
+}
+
+/* --- FLOATING & PULSING ANIMATIONS --- */
+@keyframes floatSoft {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes floatStrong {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes sparkleFloat {
+    0% { transform: translateY(0px) rotate(0deg) scale(1); }
+    50% { transform: translateY(-10px) rotate(15deg) scale(1.2); }
+    100% { transform: translateY(0px) rotate(0deg) scale(1); }
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}
