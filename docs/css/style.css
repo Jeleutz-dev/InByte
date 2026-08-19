@@ -379,3 +379,51 @@ app-header {
     50% { transform: scale(1.05); opacity: 1; }
     100% { transform: scale(1); opacity: 0.9; }
 }
+
+
+/* --- CHEF'S KISS: FLOATING EMOJIS BACKGROUND --- */
+.floating-emojis-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; 
+    z-index: 0; 
+    overflow: hidden;
+    
+    /* THE FORCE FADE: Literally erases anything in the top 20% of the screen */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 5%, transparent 15%, black 35%, black 100%);
+    mask-image: linear-gradient(to bottom, transparent 5%, transparent 15%, black 35%, black 100%);
+}
+
+.floating-emoji-wrapper {
+    position: absolute;
+    bottom: -10%;
+    user-select: none;
+}
+
+.floating-emoji-inner {
+    display: inline-block;
+    opacity: 0; 
+}
+
+/* 1. Movement stays the same */
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(0.5) rotate(-15deg); }
+    100% { transform: translateY(-120vh) scale(1.5) rotate(20deg); }
+}
+
+/* 2. Aggressive early fade */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 0.9; }
+    50% { opacity: 0.9; }
+    70% { opacity: 0 !important; } /* Forcefully hits 0 way before the end of the trip */
+    100% { opacity: 0 !important; }
+}
+
+main {
+    position: relative;
+    z-index: 1;
+}

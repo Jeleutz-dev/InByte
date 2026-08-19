@@ -1,15 +1,17 @@
 // --- 1. THE TOP BAR COMPONENT ---
 class AppHeader extends HTMLElement {
     connectedCallback() {
-        // THE DETECTOR: Checks if we are on your live GitHub site
-        const isGitHub = window.location.hostname === 'jeleutz-dev.github.io';
-        const basePath = isGitHub ? '/InByte' : '';
+        // THE FIX: Checks if the current page is inside the "pages" folder
+        const isInsidePages = window.location.pathname.includes('/pages/');
+        
+        // If yes, step back one folder (../). If no, stay here (./).
+        const root = isInsidePages ? '..' : '.';
 
         this.innerHTML = `
             <nav class="navbar">
-                <!-- LEFT: Logo & Title -->
-                <a href="${basePath}/" class="logo-container">
-                    <img src="${basePath}/assets/inbyte.png" alt="InByte Logo" class="nav-logo-img">
+                <!-- LEFT: Logo & Title (Now linking back to index.html) -->
+                <a href="${root}/index.html" class="logo-container">
+                    <img src="${root}/assets/inbyte.png" alt="InByte Logo" class="nav-logo-img">
                     <div class="logo-text">
                         <span style="color: #f1c1c8;">In</span><span style="color: #8e5968;">Byte</span><span>.date</span>
                     </div>
@@ -22,14 +24,14 @@ class AppHeader extends HTMLElement {
                     </svg>
                 </button>
 
-                <!-- CENTER & RIGHT: Links and Actions (Collapsible on Mobile) -->
+                <!-- CENTER & RIGHT: Links and Actions -->
                 <div class="nav-menu" id="navMenu">
                     <div class="nav-center">
-                        <a href="${basePath}/pages/about.html">About</a>
-                        <a href="${basePath}/pages/contact.html">Contact</a>
+                        <a href="${root}/pages/about.html">About</a>
+                        <a href="${root}/pages/contact.html">Contact</a>
                     </div>
                     <div class="nav-right">
-                        <a href="${basePath}/pages/login.html" class="login-btn">Log In</a>
+                        <a href="${root}/pages/login.html" class="login-btn">Log In</a>
                         <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
                     </div>
                 </div>
@@ -77,17 +79,17 @@ class AppHeader extends HTMLElement {
 // --- 2. THE BOTTOM BAR COMPONENT ---
 class AppFooter extends HTMLElement {
     connectedCallback() {
-        // THE DETECTOR: Applied to the footer as well!
-        const isGitHub = window.location.hostname === 'jeleutz-dev.github.io';
-        const basePath = isGitHub ? '/InByte' : '';
+        // THE FIX: Applied to the footer as well!
+        const isInsidePages = window.location.pathname.includes('/pages/');
+        const root = isInsidePages ? '..' : '.';
 
         this.innerHTML = `
             <footer class="footer">
                 <div class="footer-links">
-                    <a href="${basePath}/pages/privacy.html">Privacy Notice</a>
-                    <a href="${basePath}/pages/terms.html">Terms and Conditions</a>
-                    <a href="${basePath}/pages/contact.html">Contact Us</a>
-                    <a href="${basePath}/pages/faq.html">FAQ</a>
+                    <a href="${root}/pages/privacy.html">Privacy Notice</a>
+                    <a href="${root}/pages/terms.html">Terms and Conditions</a>
+                    <a href="${root}/pages/contact.html">Contact Us</a>
+                    <a href="${root}/pages/faq.html">FAQ</a>
                 </div>
                 <p class="footer-copy">&copy; 2026 InByte.date. All rights reserved.</p>
             </footer>
@@ -101,9 +103,7 @@ class AppFooter extends HTMLElement {
         // --- SCROLL TO TOP LOGIC ---
         const scrollBtn = this.querySelector('#scrollTopBtn');
         
-        // Listen for scroll events on the entire window
         window.addEventListener('scroll', () => {
-            // If scrolled down more than 300 pixels, show the button
             if (window.scrollY > 300) {
                 scrollBtn.classList.add('show');
             } else {
@@ -111,7 +111,6 @@ class AppFooter extends HTMLElement {
             }
         });
 
-        // When clicked, smoothly scroll back to the top
         scrollBtn.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
@@ -124,3 +123,60 @@ class AppFooter extends HTMLElement {
 // Register the custom HTML tags
 customElements.define('app-header', AppHeader);
 customElements.define('app-footer', AppFooter);
+
+
+// --- GLOBAL FLOATING EMOJI BACKGROUND INJECTOR ---
+function initFloatingEmojis() {
+    let emojiContainer = document.getElementById('emojiContainer');
+    if (!emojiContainer) {
+        emojiContainer = document.createElement('div');
+        emojiContainer.id = 'emojiContainer';
+        emojiContainer.className = 'floating-emojis-container';
+        document.body.prepend(emojiContainer);
+    }
+
+    const emojiList = ['💕', '💞', '💓', '💗', '💖', '💘', '💝', '💋', '🌸', '🩷', '🎟️', '✨', '🌷'];
+
+    function spawnEmoji() {
+        if (!emojiContainer) return;
+
+        if (emojiContainer.getElementsByClassName('floating-emoji-wrapper').length >= 6) {
+            return;
+        }
+
+        const wrapperEl = document.createElement('div');
+        wrapperEl.classList.add('floating-emoji-wrapper');
+        
+        const innerEl = document.createElement('span');
+        innerEl.classList.add('floating-emoji-inner');
+        
+        const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+        innerEl.innerText = randomEmoji;
+        
+        wrapperEl.style.left = Math.random() * 100 + 'vw';
+        
+        const size = Math.random() * 1.3 + 1.2;
+        innerEl.style.fontSize = size + 'rem';
+        
+        wrapperEl.appendChild(innerEl);
+        emojiContainer.appendChild(wrapperEl);
+        
+        const floatDuration = Math.random() * 12 + 12;
+        
+        wrapperEl.style.animation = `floatUp ${floatDuration}s linear forwards`;
+        innerEl.style.animation = `fadeInOut ${floatDuration}s linear forwards`;
+        
+        setTimeout(() => {
+            wrapperEl.remove();
+        }, floatDuration * 1000);
+    }
+
+    setInterval(spawnEmoji, 2000);
+}
+
+// Runs immediately if DOM is ready, otherwise waits for DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFloatingEmojis);
+} else {
+    initFloatingEmojis();
+}

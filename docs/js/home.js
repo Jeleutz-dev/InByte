@@ -78,39 +78,54 @@ demoModal.addEventListener('click', () => {
     demoModalContent.style.animation = 'none';
 });
 
-// --- BUG FIX: SMOOTH "NO" BUTTON TELEPORT ---
-demoNoBtn.addEventListener('mouseover', function(e) {
+// --- SMART "NO" BUTTON (HOVER ON PC, TAP ON MOBILE) ---
+function executeDodge() {
     if (demoDodgeCount < dodges.length) {
-        this.textContent = dodges[demoDodgeCount];
+        demoNoBtn.textContent = dodges[demoDodgeCount];
         demoDodgeCount++;
         
-        if (this.style.position !== 'absolute') {
-            // Record current position before switching to absolute
-            const currentLeft = this.offsetLeft;
-            const currentTop = this.offsetTop;
+        if (demoNoBtn.style.position !== 'absolute') {
+            const currentLeft = demoNoBtn.offsetLeft;
+            const currentTop = demoNoBtn.offsetTop;
             
-            this.style.position = 'absolute';
-            this.style.left = currentLeft + 'px';
-            this.style.top = currentTop + 'px';
+            demoNoBtn.style.position = 'absolute';
+            demoNoBtn.style.left = currentLeft + 'px';
+            demoNoBtn.style.top = currentTop + 'px';
             
-            // Force the browser to register the new absolute position before moving
-            this.getBoundingClientRect(); 
+            demoNoBtn.getBoundingClientRect(); 
         }
 
-        const maxX = demoCardBounds.clientWidth - this.offsetWidth - 20; 
-        const maxY = demoCardBounds.clientHeight - this.offsetHeight - 20; 
+        const maxX = demoCardBounds.clientWidth - demoNoBtn.offsetWidth - 20; 
+        const maxY = demoCardBounds.clientHeight - demoNoBtn.offsetHeight - 20; 
         
         const randomX = Math.max(10, Math.floor(Math.random() * maxX));
         const randomY = Math.max(10, Math.floor(Math.random() * maxY));
         
-        this.style.left = randomX + 'px';
-        this.style.top = randomY + 'px';
+        demoNoBtn.style.left = randomX + 'px';
+        demoNoBtn.style.top = randomY + 'px';
         
     } else {
-        this.style.display = 'none'; 
+        demoNoBtn.style.display = 'none'; 
         demoCheekyText.style.display = 'block';
     }
+}
+
+// 1. DESKTOP MODE: Triggers instantly on mouse hover
+demoNoBtn.addEventListener('mouseover', () => {
+    executeDodge();
 });
+
+// 2. MOBILE MODE: Triggers on physical finger taps (ignoring mouse clicks)
+demoNoBtn.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+        e.preventDefault();
+        demoNoBtn.blur(); // Clears mobile focus lock so it can be tapped repeatedly
+        executeDodge();
+    }
+});
+
+// pointerdown catches mouse clicks and mobile taps instantly
+demoNoBtn.addEventListener('pointerdown', handleNoButtonAction);
 
 // --- HOME FAQ ACCORDION LOGIC ---
 const faqItems = document.querySelectorAll('.faq-item');
@@ -134,53 +149,43 @@ faqItems.forEach(item => {
         }
     });
 });
-// --- CHEF'S KISS: FLOATING EMOJI BACKGROUND LOGIC ---
-const emojiList = ['💕', '💞', '💓', '💗', '💖', '💘', '💝', '💋', '🌸', '🩷', '🎟️', '✨', '🌷'];
-const emojiContainer = document.getElementById('emojiContainer');
 
-function spawnEmoji() {
-    if (!emojiContainer) return;
 
-    // THE LIMITER: If there are 6 or more emojis on screen, cancel the spawn
-    if (emojiContainer.getElementsByClassName('floating-emoji-wrapper').length >= 6) {
-        return;
-    }
 
-    // Create the outer wrapper (handles the floating)
-    const wrapperEl = document.createElement('div');
-    wrapperEl.classList.add('floating-emoji-wrapper');
-    
-    // Create the inner element (handles the fading)
-    const innerEl = document.createElement('span');
-    innerEl.classList.add('floating-emoji-inner');
-    
-    // Pick a random emoji
-    const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
-    innerEl.innerText = randomEmoji;
-    
-    // Randomize the starting position on the wrapper
-    wrapperEl.style.left = Math.random() * 100 + 'vw';
-    
-    // Randomize the size on the inner emoji
-    const size = Math.random() * 1.3 + 1.2;
-    innerEl.style.fontSize = size + 'rem';
-    
-    // Combine them
-    wrapperEl.appendChild(innerEl);
-    emojiContainer.appendChild(wrapperEl);
-    
-    // Set the duration for BOTH animations (12 to 24 seconds)
-    const floatDuration = Math.random() * 12 + 12;
-    
-    // Apply animations directly to the separate elements!
-    wrapperEl.style.animation = `floatUp ${floatDuration}s linear forwards`;
-    innerEl.style.animation = `fadeInOut ${floatDuration}s linear forwards`;
-    
-    // Clean up when the float animation is completely finished
-    setTimeout(() => {
-        wrapperEl.remove();
-    }, floatDuration * 1000);
-}
+// --- THEMES GIF HOVER/TAP OPTIMIZER ---
+const themeImages = document.querySelectorAll('.theme-img');
 
-// Try to spawn a new emoji every 2 seconds
-setInterval(spawnEmoji, 2000);
+themeImages.forEach(img => {
+    const gifSrc = img.getAttribute('data-gif');
+    const pngSrc = img.getAttribute('src');
+
+    if (!gifSrc) return;
+
+    // Preload the heavy GIF in the background so there's zero loading lag
+    const preloadGif = new Image();
+    preloadGif.src = gifSrc;
+
+    // PC MODE: Play GIF on hover, revert to PNG on mouse leave
+    img.addEventListener('mouseenter', () => {
+        img.src = gifSrc;
+    });
+
+    img.addEventListener('mouseleave', () => {
+        img.src = pngSrc;
+    });
+
+    // MOBILE MODE: Tap to toggle the animation
+    img.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); // Prevents delayed mobile mouse clicks
+        
+        if (img.src.includes(pngSrc)) {
+            // Close any other active GIFs so only one plays at a time on mobile
+            themeImages.forEach(otherImg => {
+                otherImg.src = otherImg.getAttribute('src');
+            });
+            img.src = gifSrc;
+        } else {
+            img.src = pngSrc;
+        }
+    });
+});
