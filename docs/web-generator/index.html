@@ -104,6 +104,12 @@
         <label>Pop-up Success Message (Use &lt;br&gt; for new lines)</label>
         <textarea id="genMsg" rows="3" placeholder="Write your message here! use '<br>' to break to next line"></textarea>
         
+        <div class="input-group">
+            <label for="clientImage">Upload Custom Picture (Optional)</label>
+            <input type="file" id="clientImage" accept="image/png, image/jpeg, image/gif">
+            <p id="uploadStatus" style="font-size: 0.8rem; color: #888;"></p>
+        </div>
+
         <button onclick="generateLink()">Generate Custom Link</button>
         
         <div id="resultBox">
@@ -134,7 +140,10 @@
                 loc: document.getElementById('genLoc').value,
                 msg: document.getElementById('genMsg').value,
                 mainQ: document.getElementById('genMainQ').value,
-                subQ: document.getElementById('genSubQ').value
+                subQ: document.getElementById('genSubQ').value,
+                
+                // THE FIX: Inject the uploaded image URL right here!
+                img: uploadedImageUrl 
             };
 
             // 2. Clean out any empty values so the link doesn't get unnecessarily long
@@ -145,9 +154,8 @@
             // 3. Convert object to a string, make URL safe, and scramble (Base64 Encode)
             const encodedString = encodeURIComponent(btoa(encodeURIComponent(JSON.stringify(inviteData))));
 
-            // 4. UPDATED: URL now points directly to the 'invite' subfolder!
+            // 4. Build the final URL
             let baseUrl = 'https://jeleutz-dev.github.io/InByte/invite/';
-            
             const finalUrl = baseUrl + '?invite=' + encodedString;
             
             const resultBox = document.getElementById('resultBox');
@@ -157,6 +165,54 @@
             resultLink.href = finalUrl;
             resultLink.textContent = finalUrl;
         }
+
+
+        // Uploading to Cloudinary
+        const imageInput = document.getElementById('clientImage');
+        const uploadStatus = document.getElementById('uploadStatus');
+
+        // This variable will hold the final cloud URL to attach to your link
+        let uploadedImageUrl = ""; 
+
+        imageInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 1. Show upload progress
+            uploadStatus.textContent = "Uploading to cloud... ⏳";
+            uploadStatus.style.color = "#ffaa00";
+
+            // 2. Prepare the data for Cloudinary
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // 3. Your specific Cloudinary credentials
+            formData.append('upload_preset', 'inbyte_uploads'); 
+            const cloudName = 'jg9iv8mc'; 
+
+            try {
+                // 4. Send it to Cloudinary via their API
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.secure_url) {
+                    // 5. Success! Save the URL to attach to the invite link
+                    uploadedImageUrl = data.secure_url;
+                    uploadStatus.textContent = "Upload complete! ✅";
+                    uploadStatus.style.color = "#00cc44"; 
+                } else {
+                    throw new Error("Failed to get URL");
+                }
+            } catch (error) {
+                console.error("Upload error:", error);
+                uploadStatus.textContent = "Upload failed. Try again. ❌";
+                uploadStatus.style.color = "#ff0000"; 
+            }
+        });
     </script>
 </body>
 </html>
