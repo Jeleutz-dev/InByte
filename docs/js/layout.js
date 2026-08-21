@@ -1,16 +1,13 @@
 // --- 1. THE TOP BAR COMPONENT ---
 class AppHeader extends HTMLElement {
     connectedCallback() {
-        // THE FIX: Checks if the current page is inside the "pages" folder
         const isInsidePages = window.location.pathname.includes('/pages/');
-        
-        // If yes, step back one folder (../). If no, stay here (./).
         const root = isInsidePages ? '..' : '.';
 
         this.innerHTML = `
             <nav class="navbar">
-                <!-- LEFT: Logo & Title (Now linking back to index.html) -->
-                <a href="${root}/index.html" class="logo-container">
+                <!-- LEFT: Logo & Title -->
+                <a href="${root}/" class="logo-container">
                     <img src="${root}/assets/inbyte.png" alt="InByte Logo" class="nav-logo-img">
                     <div class="logo-text">
                         <span style="color: #f1c1c8;">In</span><span style="color: #8e5968;">Byte</span><span>.date</span>
@@ -38,12 +35,23 @@ class AppHeader extends HTMLElement {
             </nav>
         `;
 
-        // --- Hamburger Menu Logic ---
+        // --- Hamburger Menu Logic & Click-Outside Fix ---
         const hamburger = this.querySelector('#hamburgerMenu');
         const navMenu = this.querySelector('#navMenu');
         
-        hamburger.addEventListener('click', () => {
+        hamburger.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevents the click from instantly triggering the document listener
             navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking anywhere outside of the navbar
+        document.addEventListener('click', (event) => {
+            if (navMenu.classList.contains('active')) {
+                const isClickInside = this.contains(event.target);
+                if (!isClickInside) {
+                    navMenu.classList.remove('active');
+                }
+            }
         });
 
         // --- Dark Mode Logic ---
@@ -79,7 +87,6 @@ class AppHeader extends HTMLElement {
 // --- 2. THE BOTTOM BAR COMPONENT ---
 class AppFooter extends HTMLElement {
     connectedCallback() {
-        // THE FIX: Applied to the footer as well!
         const isInsidePages = window.location.pathname.includes('/pages/');
         const root = isInsidePages ? '..' : '.';
 
@@ -94,13 +101,11 @@ class AppFooter extends HTMLElement {
                 <p class="footer-copy">&copy; 2026 InByte.date. All rights reserved.</p>
             </footer>
             
-            <!-- THE NEW SCROLL TO TOP BUTTON -->
             <button id="scrollTopBtn" class="scroll-to-top" aria-label="Scroll to top">
                 ↑
             </button>
         `;
 
-        // --- SCROLL TO TOP LOGIC ---
         const scrollBtn = this.querySelector('#scrollTopBtn');
         
         window.addEventListener('scroll', () => {
@@ -120,10 +125,9 @@ class AppFooter extends HTMLElement {
     }
 }
 
-// Register the custom HTML tags
+// Register custom HTML tags
 customElements.define('app-header', AppHeader);
 customElements.define('app-footer', AppFooter);
-
 
 // --- GLOBAL FLOATING EMOJI BACKGROUND INJECTOR ---
 function initFloatingEmojis() {
@@ -148,11 +152,9 @@ function initFloatingEmojis() {
         const innerEl = document.createElement('span');
         innerEl.classList.add('floating-emoji-inner');
         
-        // --- THE THEME-AWARE EMOJI LOGIC ---
         const lightEmojis = ['💕', '💞', '💓', '💗', '💖', '💘', '💝', '💋', '🌸', '🩷', '🎟️', '✨', '🌷'];
         const darkEmojis = ['✨', '⭐', '🌟', '☄️', '🌕', '🌙', '🪐', '🤍', '💖'];
 
-        // Instantly checks the theme right before spawning
         const isDark = document.body.classList.contains('dark-mode');
         const activeArray = isDark ? darkEmojis : lightEmojis;
         
@@ -180,7 +182,6 @@ function initFloatingEmojis() {
     setInterval(spawnEmoji, 2000);
 }
 
-// Runs immediately if DOM is ready, otherwise waits for DOMContentLoaded
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFloatingEmojis);
 } else {
