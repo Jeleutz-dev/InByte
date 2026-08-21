@@ -135,8 +135,6 @@ function initFloatingEmojis() {
         document.body.prepend(emojiContainer);
     }
 
-    const emojiList = ['💕', '💞', '💓', '💗', '💖', '💘', '💝', '💋', '🌸', '🩷', '🎟️', '✨', '🌷'];
-
     function spawnEmoji() {
         if (!emojiContainer) return;
 
@@ -150,7 +148,15 @@ function initFloatingEmojis() {
         const innerEl = document.createElement('span');
         innerEl.classList.add('floating-emoji-inner');
         
-        const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+        // --- THE THEME-AWARE EMOJI LOGIC ---
+        const lightEmojis = ['💕', '💞', '💓', '💗', '💖', '💘', '💝', '💋', '🌸', '🩷', '🎟️', '✨', '🌷'];
+        const darkEmojis = ['✨', '⭐', '🌟', '☄️', '🌕', '🌙', '🪐', '🤍', '💖'];
+
+        // Instantly checks the theme right before spawning
+        const isDark = document.body.classList.contains('dark-mode');
+        const activeArray = isDark ? darkEmojis : lightEmojis;
+        
+        const randomEmoji = activeArray[Math.floor(Math.random() * activeArray.length)];
         innerEl.innerText = randomEmoji;
         
         wrapperEl.style.left = Math.random() * 100 + 'vw';

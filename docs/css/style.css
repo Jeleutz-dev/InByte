@@ -16,7 +16,8 @@
 }
 
 .dark-mode {
-    --bg-color: linear-gradient(135deg, #121212 0%, #110a0a 50%, #080102 100%);
+    /* The moving night sky gradient */
+    --bg-color: linear-gradient(-45deg, #000000, #040914, #0a1128, #000000);
     --text-color: #f5f5f5;
     --nav-bg: #1e1e1e;
     
@@ -27,7 +28,9 @@
     --border-color: rgba(255, 255, 255, 0.05);
     --primary-color: #E23636; 
     --hover-bg: #2a2a2a;
-    --neon-glow: 0 0 20px rgba(241, 193, 200, 0.3), 0 0 40px rgba(226, 54, 54, 0.4);
+    
+    /* Sky Blue & White Neon Glow for the navbar and cards */
+    --neon-glow: 0 0 20px rgba(135, 206, 235, 0.4), 0 0 40px rgba(255, 255, 255, 0.1);
 }
 
 /* --- BACKGROUND ANIMATION --- */
@@ -187,7 +190,7 @@ app-header {
 
 .login-btn:hover {
     background-color: var(--text-color);
-    color: var(--bg-color) !important;
+    color: var(--nav-bg) !important; 
 }
 
 .theme-toggle {
@@ -426,4 +429,59 @@ app-header {
 main {
     position: relative;
     z-index: 1;
+}
+
+/* --- DARK MODE EXCLUSIVES: CARDS & HERO TITLE --- */
+
+/* Targets all specific cards in dark mode to match the neon glow */
+.dark-mode .demo-card, 
+.dark-mode .theme-card, 
+.dark-mode .step-card, 
+.dark-mode .contact-card, 
+.dark-mode .auth-card,
+.dark-mode .dev-preview-card,
+.dark-mode .faq-item {
+    background: rgba(10, 15, 30, 0.6); 
+    border: 1px solid rgba(135, 206, 235, 0.3);
+    box-shadow: var(--neon-glow);
+}
+
+/* 
+   IMPORTANT: Make sure your HTML has class="hero-title" 
+   on the "Drop a link. Set the scene." text! 
+*/
+.dark-mode .hero-title {
+    /* Moonlit White to Light Blue Gradient */
+    background: linear-gradient(to bottom right, #f7c738, #dfbe2d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* We use drop-shadow instead of text-shadow so it glows AROUND the clipped text */
+    filter: drop-shadow(0 0 8px rgba(158, 209, 209, 0.8)) drop-shadow(0 0 15px rgba(135, 206, 235, 0.3));
+}
+
+/* Protects the sparkle emoji from becoming transparent! */
+.dark-mode .hero-title .title-sparkle {
+    -webkit-text-fill-color: initial;
+    filter: none; /* Stops the drop-shadow from double-stacking on the emoji */
+}
+
+/* --- DARK MODE HOVER SYNC --- */
+.dark-mode .theme-card:hover, 
+.dark-mode .step-card:hover, 
+.dark-mode .contact-card:hover, 
+.dark-mode .faq-item:hover {
+    /* Changes the red border to Sky Blue */
+    border-color: #87CEEB !important;
+    
+    /* Replaces the hardcoded red rgba values with the Sky Blue neon glow */
+    box-shadow: 0 20px 40px rgba(135, 206, 235, 0.2), 0 0 25px rgba(135, 206, 235, 0.6) !important;
+}
+
+/* Fix for the Developer Contact Button hover state in dark mode */
+.dark-mode .dev-contact-btn:hover {
+    border-color: #87CEEB !important;
+    background-color: #87CEEB !important;
+    color: #000000 !important;
+    box-shadow: 0 10px 20px rgba(135, 206, 235, 0.3) !important;
 }

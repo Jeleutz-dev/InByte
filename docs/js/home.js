@@ -124,8 +124,6 @@ demoNoBtn.addEventListener('pointerdown', (e) => {
     }
 });
 
-// pointerdown catches mouse clicks and mobile taps instantly
-demoNoBtn.addEventListener('pointerdown', handleNoButtonAction);
 
 // --- HOME FAQ ACCORDION LOGIC ---
 const faqItems = document.querySelectorAll('.faq-item');
