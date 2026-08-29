@@ -33,7 +33,7 @@
         h2 { margin-top: 0; color: #1a1a1a; text-align: center; }
         label { font-weight: 500; display: block; margin-top: 1rem; font-size: 0.9rem; color: #555; }
         
-        input[type="text"], input[type="datetime-local"], textarea, select { 
+        input[type="text"], input[type="date"], input[type="time"], textarea, select { 
             width: 100%; 
             padding: 10px; 
             margin-top: 5px; 
@@ -43,6 +43,16 @@
             box-sizing: border-box;
             background-color: white;
         }
+        
+        .date-time-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .date-time-group input {
+            flex: 1;
+        }
+
         button { 
             margin-top: 1.5rem; 
             width: 100%; 
@@ -95,8 +105,11 @@
             <option value="Insidious: Out of the Further">Insidious: Out of the Further</option>
         </select>
         
-        <label>Date & Time</label>
-        <input type="datetime-local" id="genDate">
+        <label>Date & Time (Time is optional)</label>
+        <div class="date-time-group">
+            <input type="date" id="genDate">
+            <input type="time" id="genTime">
+        </div>
         
         <label>Location</label>
         <input type="text" id="genLoc" placeholder="e.g., SM MOA Director's Club">
@@ -122,14 +135,27 @@
     <script>
         function generateLink() {
             // --- Date Formatting Logic ---
-            let rawDate = document.getElementById('genDate').value;
+            let dateVal = document.getElementById('genDate').value;
+            let timeVal = document.getElementById('genTime').value;
             let formattedDate = "";
             
-            if (rawDate) {
-                let d = new Date(rawDate);
+            if (dateVal) {
+                // Parse date safely to avoid timezone bugs
+                let [year, month, day] = dateVal.split('-');
+                let d = new Date(year, month - 1, day);
                 let datePart = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-                let timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                formattedDate = datePart + " @ " + timePart;
+                
+                if (timeVal) {
+                    // Convert 24h time to 12h AM/PM
+                    let [hours, minutes] = timeVal.split(':');
+                    let ampm = hours >= 12 ? 'PM' : 'AM';
+                    let h = hours % 12;
+                    h = h ? h : 12; // the hour '0' should be '12'
+                    formattedDate = datePart + " @ " + h + ":" + minutes + " " + ampm;
+                } else {
+                    // No time provided, output just the date cleanly!
+                    formattedDate = datePart; 
+                }
             }
 
             // 1. Gather all inputs into a single object

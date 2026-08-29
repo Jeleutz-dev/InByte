@@ -16,6 +16,28 @@
 </head>
 <body>
 
+    <script>
+        (function() {
+            const p = new URLSearchParams(window.location.search);
+            let m = p.get('movie');
+            
+            if (p.has('invite')) {
+                try {
+                    const safeBase64 = p.get('invite').replace(/ /g, '+');
+                    const decodedString = decodeURIComponent(atob(safeBase64));
+                    const data = JSON.parse(decodedString);
+                    m = data.movie;
+                } catch (e) {}
+            }
+            
+            if (m === 'Avengers: Doomsday') {
+                document.body.classList.add('doomsday-theme');
+            } else if (m === 'Insidious: Out of the Further') {
+                document.body.classList.add('insidious-theme');
+            }
+        })();
+    </script>
+
     <!-- AUDIO ELEMENT FOR THE SCREAM FX -->
     <audio id="screamSound">
         <source src="../assets/effects/scream.mp3" type="audio/mpeg">
@@ -24,6 +46,11 @@
     <!-- NEW: Web shooter sound -->
     <audio id="webSound">
         <source src="../assets/effects/web.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- NEW: Crack sound for Doomsday -->
+    <audio id="crackSound">
+        <source src="../assets/effects/crack.mp3" type="audio/mpeg">
     </audio>
     
     <!-- NEW: SPIDERMAN EMOJI CONTAINER -->
@@ -68,6 +95,11 @@
         <div id="blackout" class="blackout-screen"></div>
         <div id="tealFog" class="teal-fog"></div>
         <img src="../assets/img/cute_ghost.png" id="jumpscareImage" class="jumpscare-img" alt="Boo!">
+
+        <!-- NEW: DOOMSDAY EFFECTS -->
+        <div id="doomsdayFog" class="doomsday-fog"></div>
+        <img src="../assets/img/cracks.png" id="doomsdayCrackImage" class="rift-image" alt="Reality Cracks">
+        <img src="../assets/img/rift.png" id="doomsdayRiftImage" class="rift-image" alt="Reality Rift">
 
         <div class="modal-content">
             <div class="modal-title">It's a Date!</div>
