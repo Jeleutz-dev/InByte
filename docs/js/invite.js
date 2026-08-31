@@ -3,22 +3,16 @@ function initFloatingEmojis(isDoomsdayTheme) {
     const emojiContainer = document.getElementById('emojiContainer');
     if (!emojiContainer) return;
 
-    // The two different emoji sets
     const spideyEmojis = ['🕷️', '🕸️', '🍿', '🎥', '🎟️', '❤️‍🔥', '💖', '💞', '💕'];
-    const doomEmojis = ['💚', '🖤']; // Exclusively Green and Black hearts for Doomsday
-    
-    // Choose which set to use based on the theme
+    const doomEmojis = ['💚', '🖤']; 
     const activeEmojis = isDoomsdayTheme ? doomEmojis : spideyEmojis;
 
     function spawnEmoji() {
-        // Limit to 8 emojis on screen at once
         if (emojiContainer.getElementsByClassName('floating-emoji-wrapper').length >= 8) {
             return;
         }
-
         const wrapperEl = document.createElement('div');
         wrapperEl.classList.add('floating-emoji-wrapper');
-        
         const innerEl = document.createElement('span');
         innerEl.classList.add('floating-emoji-inner');
         
@@ -26,131 +20,87 @@ function initFloatingEmojis(isDoomsdayTheme) {
         innerEl.innerText = randomEmoji;
         
         wrapperEl.style.left = Math.random() * 100 + 'vw';
-        
         const size = Math.random() * 1.5 + 1.2;
         innerEl.style.fontSize = size + 'rem';
         
         wrapperEl.appendChild(innerEl);
         emojiContainer.appendChild(wrapperEl);
         
-        const floatDuration = Math.random() * 10 + 10; // Floats for 10-20 seconds
-        
+        const floatDuration = Math.random() * 10 + 10; 
         wrapperEl.style.animation = `floatEmojiUp ${floatDuration}s linear forwards`;
         innerEl.style.animation = `fadeEmojiInOut ${floatDuration}s linear forwards`;
         
-        setTimeout(() => {
-            wrapperEl.remove();
-        }, floatDuration * 1000);
+        setTimeout(() => { wrapperEl.remove(); }, floatDuration * 1000);
     }
-
-    // Spawn a new emoji every 1.5 seconds
     setInterval(spawnEmoji, 1500);
 }
 
-// --- URL PARAMETER LOGIC ---
-const params = new URLSearchParams(window.location.search);
-let customData = {};
-
-if (params.has('invite')) {
-    try {
-        const safeBase64 = params.get('invite').replace(/ /g, '+'); 
-        const decodedString = decodeURIComponent(atob(safeBase64));
-        customData = JSON.parse(decodedString);
-    } catch (e) {
-        console.error("Invalid invite code");
-    }
-} else {
-    customData = {
-        name: params.get('name'), movie: params.get('movie'),
-        date: params.get('date'), loc: params.get('loc'),
-        msg: params.get('msg'), mainQ: params.get('mainQ'), subQ: params.get('subQ')
-    };
-}
-
-// --- FIXED: Custom Question Logic Using "??" ---
-let mainQ = customData.mainQ ?? "";
-let subQ = customData.subQ ?? "";
-
-// Ensure we don't render empty tags if they are blank
-let nameStr = (customData.name && customData.name.trim() !== "") ? customData.name + ", " : "";
-let subQStr = (subQ && subQ.trim() !== "") ? "<br><em>" + subQ + "</em>" : "";
-
-document.getElementById('inviteTitle').innerHTML = nameStr + mainQ + subQStr;
-
-// --- NEW: CUSTOM IMAGE LOGIC ---
-const modalClientPic = document.getElementById('modalClientPic');
-if (customData.img && customData.img.trim() !== "") {
-    modalClientPic.src = customData.img;
-    modalClientPic.style.display = 'block'; // Unhide it!
-} else {
-    modalClientPic.style.display = 'none'; // Keep hidden if standard link
-}
-
-// --- THEME SWAP LOGIC ---
-const movieChoice = customData.movie;
 let isDoomsday = false; 
 let isInsidious = false; 
 
-if (movieChoice) {
-    document.getElementById('movieName').textContent = movieChoice;
-    
-    if (movieChoice === 'Avengers: Doomsday') {
-        isDoomsday = true; 
-        document.body.classList.add('doomsday-theme');
-        document.getElementById('pageIcon').href = "../assets/dr-doom.png";
+// --- FIRESTORE TRIGGER: This runs once Firestore gets the data ---
+window.initializeInvite = function(customData) {
+    let mainQ = customData.mainQ ?? "";
+    let subQ = customData.subQ ?? "";
+    let nameStr = (customData.name && customData.name.trim() !== "") ? customData.name + ", " : "";
+    let subQStr = (subQ && subQ.trim() !== "") ? "<br><em>" + subQ + "</em>" : "";
 
-        const web1 = document.getElementById('web1');
-        web1.src = "../assets/img/magic_effect.png";
-        web1.className = "magic-circle-shoot"; 
-    } 
-    else if (movieChoice === 'Insidious: Out of the Further') {
-        isInsidious = true;
-        document.body.classList.add('insidious-theme');
-        document.getElementById('pageIcon').href = "../assets/ghost.png";
+    document.getElementById('inviteTitle').innerHTML = nameStr + mainQ + subQStr;
 
-        // --- Change button text for the horror theme! ---
-        document.getElementById('yesBtn').textContent = "Enter the Further";
-        document.getElementById('noBtn').textContent = "Too scared!";
-    }
-
-    // Trigger floating emojis for both Spiderman and Doomsday
-    if (!isInsidious) {
-        initFloatingEmojis(isDoomsday);
+    const modalClientPic = document.getElementById('modalClientPic');
+    if (customData.img && customData.img.trim() !== "") {
+        modalClientPic.src = customData.img;
+        modalClientPic.style.display = 'block'; 
     } else {
-        // Ensure the container is removed if insidious theme is active
-        const container = document.getElementById('emojiContainer');
-        if (container) container.remove();
+        modalClientPic.style.display = 'none'; 
     }
-}
 
-// --- DATE, LOCATION & COUNTDOWN ---
-if (Object.keys(customData).length > 0 || window.location.search) {
+    const movieChoice = customData.movie;
+    if (movieChoice) {
+        document.getElementById('movieName').textContent = movieChoice;
+        
+        if (movieChoice === 'Avengers: Doomsday') {
+            isDoomsday = true; 
+            document.body.classList.add('doomsday-theme');
+            document.getElementById('pageIcon').href = "../assets/dr-doom.png";
+            const web1 = document.getElementById('web1');
+            web1.src = "../assets/img/magic_effect.png";
+            web1.className = "magic-circle-shoot"; 
+        } 
+        else if (movieChoice === 'Insidious: Out of the Further') {
+            isInsidious = true;
+            document.body.classList.add('insidious-theme');
+            document.getElementById('pageIcon').href = "../assets/ghost.png";
+            document.getElementById('yesBtn').textContent = "Enter the Further";
+            document.getElementById('noBtn').textContent = "Too scared!";
+        }
+
+        if (!isInsidious) {
+            initFloatingEmojis(isDoomsday);
+        } else {
+            const container = document.getElementById('emojiContainer');
+            if (container) container.remove();
+        }
+    }
+
     let dateVal = customData.date;
-    
-    // Check if it's completely empty or just a stray "@" symbol from the generator
     if (!dateVal || dateVal.trim() === "" || dateVal.trim() === "@") {
         document.getElementById('dateLine').style.display = 'none';
     } else {
-        // Clean up trailing "@" for the display so it looks neat
         let displayDate = dateVal.trim();
         if (displayDate.endsWith('@')) {
             displayDate = displayDate.slice(0, -1).trim();
         }
-        
         document.getElementById('dateTime').textContent = displayDate;
         
-        // The Date object naturally defaults to midnight if no time is provided!
-        // Just strip out the "@" so the JS parser can read it cleanly.
         let cleanDateString = displayDate.replace('@', '').trim();
         let countDownDate = new Date(cleanDateString).getTime();
 
         if (!isNaN(countDownDate)) {
             document.getElementById('countdownContainer').style.display = 'block';
-
             let x = setInterval(function() {
                 let now = new Date().getTime();
                 let distance = countDownDate - now;
-
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById('countdownText').innerHTML = "It's Movie Time!";
@@ -174,10 +124,8 @@ if (Object.keys(customData).length > 0 || window.location.search) {
         locLine.style.display = 'none';
     } else {
         document.getElementById('locationPlace').textContent = locVal;
-        // Pre-load the map URL, but keep it hidden by default!
         document.getElementById('miniMap').src = 'https://maps.google.com/maps?q=' + encodeURIComponent(locVal) + '&t=m&z=14&output=embed';
         
-        // Toggle Map Visibility on Click
         mapToggleBtn.addEventListener('click', function() {
             if (mapContainer.classList.contains('show-map')) {
                 mapContainer.classList.remove('show-map');
@@ -188,13 +136,17 @@ if (Object.keys(customData).length > 0 || window.location.search) {
             }
         });
     }
-}
 
-// --- FIXED: Modal Message Logic ---
-if (customData.msg !== undefined && customData.msg !== null) {
-    document.getElementById('modalMessage').innerHTML = customData.msg;
-}
+    if (customData.msg !== undefined && customData.msg !== null) {
+        document.getElementById('modalMessage').innerHTML = customData.msg;
+    }
 
+    // Reveal the card
+    document.getElementById('inviteCard').style.visibility = 'visible';
+    document.body.style.visibility = 'visible';
+};
+
+// --- ANIMATION & BUTTON LOGIC ---
 const noBtn = document.getElementById('noBtn');
 const yesBtn = document.getElementById('yesBtn');
 const modal = document.getElementById('successModal');
@@ -212,7 +164,6 @@ const doomsdayFog = document.getElementById('doomsdayFog');
 const crackImage = document.getElementById('doomsdayCrackImage');
 const riftImage = document.getElementById('doomsdayRiftImage');
 
-// --- RANDOMIZED BUTTON LOGIC ---
 const cheekyText = document.getElementById('cheekyText');
 let dodgeCount = 0;
 
@@ -226,10 +177,7 @@ const finalCheekyPhrases = [
     "I admire your persistence, but we're still going. 🍿"
 ];
 
-let randomDodges = [
-    "Too slow! 🐢", "Catch me! 🦋", "Nope! 🏃💨", "Missed! 😛", "Oops! 🙈"
-];
-
+let randomDodges = ["Too slow! 🐢", "Catch me! 🦋", "Nope! 🏃💨", "Missed! 😛", "Oops! 🙈"];
 for (let i = randomDodges.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [randomDodges[i], randomDodges[j]] = [randomDodges[j], randomDodges[i]];
@@ -240,7 +188,6 @@ let splatTimer, pullTimer;
 
 function runaway(e) {
     if (e) e.preventDefault();
-
     if (dodgeCount >= 6) {
         noBtn.style.display = 'none'; 
         const randomText = finalCheekyPhrases[Math.floor(Math.random() * finalCheekyPhrases.length)];
@@ -248,7 +195,6 @@ function runaway(e) {
         cheekyText.style.display = 'block'; 
         return; 
     }
-
     noBtn.textContent = randomDodges[dodgeCount];
     dodgeCount++; 
 
@@ -258,24 +204,18 @@ function runaway(e) {
         noBtn.style.position = 'fixed';
         noBtn.style.left = rect.left + 'px';
         noBtn.style.top = rect.top + 'px';
-        noBtn.getBoundingClientRect(); // Forces layout recalculation to ensure transition works
+        noBtn.getBoundingClientRect(); 
     }
-
     const maxX = window.innerWidth - noBtn.offsetWidth;
     const maxY = window.innerHeight - noBtn.offsetHeight;
-    
-    const randomX = Math.max(0, Math.floor(Math.random() * maxX));
-    const randomY = Math.max(0, Math.floor(Math.random() * maxY));
-    
-    noBtn.style.left = randomX + 'px';
-    noBtn.style.top = randomY + 'px';
+    noBtn.style.left = Math.max(0, Math.floor(Math.random() * maxX)) + 'px';
+    noBtn.style.top = Math.max(0, Math.floor(Math.random() * maxY)) + 'px';
 }
 
 noBtn.addEventListener('mouseover', runaway);
 noBtn.addEventListener('touchstart', runaway);
 noBtn.addEventListener('click', runaway);
 
-// --- THE "YES" ACTION ---
 yesBtn.addEventListener('click', function() {
     web1.style.animation = 'none';
     web2.style.animation = 'none';
@@ -296,73 +236,49 @@ yesBtn.addEventListener('click', function() {
     if (isInsidious) {
         modal.style.transition = 'none'; 
         modal.classList.add('active');
-
-        // 1. Light flicker
         blackout.style.animation = 'flickerBlack 0.8s ease-in-out forwards';
-        
-        // 2. Teal fog
-        setTimeout(() => {
-            tealFog.style.animation = 'driftFog 2.5s ease-in-out forwards';
-        }, 400);
-
-        // 3. JUMPSCARE & SCREAM!
+        setTimeout(() => { tealFog.style.animation = 'driftFog 2.5s ease-in-out forwards'; }, 400);
         splatTimer = setTimeout(() => {
             screamSound.currentTime = 0; 
-            screamSound.play().catch(e => console.log("Audio block: user didn't interact properly."));
+            screamSound.play().catch(e => console.log("Audio block"));
             jumpscareImg.style.animation = 'snapJumpscare 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
         }, 800);
-        
-        // 4. Fade to modal
         pullTimer = setTimeout(() => {
             blackout.style.animation = 'fadeBlackout 0.8s ease-out forwards';
             modalContent.style.animation = 'pullModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
         }, 1800); 
-
     } else {
         modal.style.transition = 'opacity 0.4s ease, visibility 0.4s ease';
         modal.classList.add('active');
 
         if (isDoomsday) {
-            // 0. Vibrate the card and the Doomsday overlay (magic circles stay completely still!)
             document.querySelector('.card').classList.add('shake-active');
             modal.classList.add('shake-active');
-
-            // 1. Play the crack sound instantly AND animate Magic Circles
             crackSound.currentTime = 0;
-            crackSound.play().catch(e => console.log("Audio block:", e));
+            crackSound.play().catch(e => console.log("Audio block"));
             
             web1.style.animation = 'magicPopRotate 1.5s ease-out forwards';
             magic2.style.animation = 'magicPopRotate 1.5s ease-out forwards'; 
-            
-            // 2. Green Fog slowly creeps in
             doomsdayFog.style.animation = 'doomsdayFogIn 2.5s ease-out forwards';
             
             splatTimer = setTimeout(() => {
-                // 3. Magic circles vanish, Crack violently snaps in!
                 web1.style.animation = 'magicVanish 0.3s ease-in forwards';
                 magic2.style.animation = 'magicVanish 0.3s ease-in forwards'; 
-                
                 crackImage.style.animation = 'snapCrack 0.15s ease-out forwards';
                 
                 setTimeout(() => {
-                    // 4. Crack shatters away, Rift Image bursts open
                     crackImage.style.animation = 'shatterCrack 0.2s ease-in forwards';
                     riftImage.style.animation = 'tearImageOpen 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-                    
                     pullTimer = setTimeout(() => {
-                        // 5. Stop shaking, pop the modal out of the void!
                         document.querySelector('.card').classList.remove('shake-active');
                         modal.classList.remove('shake-active');
                         modalContent.style.animation = 'pullModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
                     }, 500); 
-                    
-                }, 400); // Holds the crack for 400ms before tearing open
-                
+                }, 400); 
             }, 1500); 
         } else {
             webSound.currentTime = 0;
-            webSound.play().catch(e => console.log("Audio block:", e));
-            
+            webSound.play().catch(e => console.log("Audio block"));
             web1.style.animation = 'shootWeb 0.25s ease-out forwards';
             splatTimer = setTimeout(() => {
                 web2.style.animation = 'splatIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
@@ -376,7 +292,6 @@ yesBtn.addEventListener('click', function() {
     }
 });
 
-// Close Modal
 modal.addEventListener('click', function(e) {
     if (e.target === modal) {
         modal.classList.remove('active');

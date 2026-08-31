@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Date RSVP</title>
-    <!-- Dynamic Favicon (Defaults to Spiderman) -->
     <link rel="icon" id="pageIcon" type="image/png" href="../assets/spideyyy.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,18 +16,10 @@
 <body>
 
     <script>
+        // Synchronous script to set theme IMMEDIATELY so invite.js triggers the right animations
         (function() {
             const p = new URLSearchParams(window.location.search);
-            let m = p.get('movie');
-            
-            if (p.has('invite')) {
-                try {
-                    const safeBase64 = p.get('invite').replace(/ /g, '+');
-                    const decodedString = decodeURIComponent(atob(safeBase64));
-                    const data = JSON.parse(decodedString);
-                    m = data.movie;
-                } catch (e) {}
-            }
+            const m = p.get('m'); 
             
             if (m === 'Avengers: Doomsday') {
                 document.body.classList.add('doomsday-theme');
@@ -38,34 +29,27 @@
         })();
     </script>
 
-    <!-- AUDIO ELEMENT FOR THE SCREAM FX -->
+    <!-- AUDIO ELEMENTS -->
     <audio id="screamSound">
         <source src="../assets/effects/scream.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- NEW: Web shooter sound -->
     <audio id="webSound">
         <source src="../assets/effects/web.mp3" type="audio/mpeg">
     </audio>
-    
-    <!-- NEW: Crack sound for Doomsday -->
     <audio id="crackSound">
         <source src="../assets/effects/crack.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- NEW: SPIDERMAN EMOJI CONTAINER -->
     <div id="emojiContainer" class="floating-emojis-container"></div>
 
-    <div class="card">
-        <h1 id="inviteTitle">  <br><em> </em></h1>
-        <!-- <h1 id="inviteTitle">` <br><em>I bought tickets!</em></h1> -->
+    <div class="card" id="inviteCard" style="visibility: hidden;">
+        <h1 id="inviteTitle"><br><em></em></h1>
         
         <div class="details">
-            <!-- <p><strong>Movie:</strong> <span class="highlight" id="movieName">Spiderman: Brand New Day</span></p> -->
             <p><strong>Movie:</strong> <span class="highlight" id="movieName"></span></p>
-            <p id="dateLine"><strong>Date & Time:</strong> <span id="dateTime">July 31, 2026 @ 9:15 PM</span></p>
-            <p id="locLine"><strong>Location:</strong> <span id="locationPlace">SM MOA ScreenX</span> <br>
-                <span id="mapToggleBtn" class="map-toggle highlight">(View Map)</span>
+            <p id="dateLine"><strong>Date & Time:</strong> <span id="dateTime"></span></p>
+            <p id="locLine"><strong>Location:</strong> <span id="locationPlace"></span> <br>
+                <span id="mapToggleBtn" class="map-toggle highlight" style="display:none;">(View Map)</span>
             </p>
             
             <div id="countdownContainer" style="display: none; margin: 20px auto 0 auto; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
@@ -96,20 +80,95 @@
         <div id="tealFog" class="teal-fog"></div>
         <img src="../assets/img/cute_ghost.png" id="jumpscareImage" class="jumpscare-img" alt="Boo!">
 
-        <!-- NEW: DOOMSDAY EFFECTS -->
         <div id="doomsdayFog" class="doomsday-fog"></div>
         <img src="../assets/img/cracks.png" id="doomsdayCrackImage" class="rift-image" alt="Reality Cracks">
         <img src="../assets/img/rift.png" id="doomsdayRiftImage" class="rift-image" alt="Reality Rift">
 
         <div class="modal-content">
             <div class="modal-title">It's a Date!</div>
-            
-            <!-- NEW: Client Custom Image (Hidden by default) -->
             <img id="modalClientPic" src="" alt="Client Custom Picture" style="display: none;">
-            
             <p id="modalMessage"></p>
         </div>
     </div>
-    
+
+    <!-- FIRESTORE FETCH SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMiOy1uO1_eSHkTW6Af4HetzYiBxLNrZE",
+            authDomain: "inbyte-95cd5.firebaseapp.com",
+            projectId: "inbyte-95cd5",
+            storageBucket: "inbyte-95cd5.firebasestorage.app",
+            messagingSenderId: "12505561820",
+            appId: "1:12505561820:web:f54fdb68af65a52b1d9219",
+            measurementId: "G-3JW84GNH49"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadInvite() {
+            const params = new URLSearchParams(window.location.search);
+            
+            // --- LEGACY LINK SUPPORT ---
+            if (params.has('invite')) {
+                try {
+                    // Decodes the old Base64/URL-encoded payload
+                    const rawData = atob(decodeURIComponent(params.get('invite')));
+                    const inviteData = JSON.parse(decodeURIComponent(rawData));
+                    
+                    if (window.initializeInvite) {
+                        window.initializeInvite(inviteData);
+                    }
+                    return; // Stop here, do not query Firestore
+                } catch (error) {
+                    console.error("Error decoding old link:", error);
+                }
+            }
+            // ---------------------------
+
+            const inviteId = params.get('id');
+            
+            if (!inviteId) {
+                document.body.innerHTML = "<h2 style='text-align:center; color:#fff; padding-top:20vh; font-family:sans-serif;'>Invalid Invite Link</h2>";
+                document.body.style.visibility = 'visible';
+                return;
+            }
+
+            try {
+                const docRef = doc(db, "invites", inviteId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    if (data.status === 'deactivated' || data.status === 'deleted') {
+                        document.body.innerHTML = "<h2 style='text-align:center; color:#fff; padding-top:20vh; font-family:sans-serif;'>This invite is no longer available.</h2>";
+                        document.body.style.visibility = 'visible';
+                        return;
+                    }
+                    
+                    if (window.initializeInvite) {
+                        window.initializeInvite(data);
+                    }
+                    
+                    if (!params.has('preview')) {
+                        await updateDoc(docRef, { views: increment(1) });
+                    }
+                } else {
+                    document.body.innerHTML = "<h2 style='text-align:center; color:#fff; padding-top:20vh; font-family:sans-serif;'>This invite does not exist.</h2>";
+                    document.body.style.visibility = 'visible';
+                }
+            } catch (error) {
+                console.error("Error fetching invite:", error);
+                document.body.innerHTML = "<h2 style='text-align:center; color:#fff; padding-top:20vh; font-family:sans-serif;'>Error loading data.</h2>";
+                document.body.style.visibility = 'visible';
+            }
+        }
+
+        loadInvite();
+    </script>
 </body>
 </html>

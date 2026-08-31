@@ -1,39 +1,43 @@
-// --- 1. THE TOP BAR COMPONENT ---
-class AppHeader extends HTMLElement {
+// --- 1. THE PRIVATE TOP BAR (Dashboard & Generator) ---
+class PrivateHeader extends HTMLElement {
     connectedCallback() {
-        const isInsidePages = window.location.pathname.includes('/pages/');
-        const root = isInsidePages ? '..' : '.'; 
+        const path = window.location.pathname;
+        const isSubfolder = path.includes('/pages/') || path.includes('/web-generator/') || path.includes('/invite/');
+        const root = isSubfolder ? '..' : '.';
+
+        const isDashboard = path.includes('dashboard.html');
+        const logoHref = isDashboard ? '#' : `${root}/pages/dashboard.html`;
+        const logoAction = isDashboard ? 'onclick="window.location.reload()"' : '';
 
         this.innerHTML = `
             <nav class="navbar">
-                <a href="${root}/" class="logo-container">
+                <a href="${logoHref}" ${logoAction} class="logo-container">
                     <img src="${root}/assets/inbyte.png" alt="InByte Logo" class="nav-logo-img">
                     <div class="logo-text">
                         <span style="color: #f1c1c8;">In</span><span style="color: #8e5968;">Byte</span><span>.date</span>
                     </div>
                 </a>
-
-                <button class="hamburger" id="hamburgerMenu" aria-label="Toggle Menu">
+                
+                <!-- Hamburger Button -->
+                <button class="hamburger" id="privateHamburgerMenu" aria-label="Toggle Menu">
                     <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
                     </svg>
                 </button>
 
-                <div class="nav-menu" id="navMenu">
-                    <div class="nav-center">
-                        <a href="${root}/pages/about.html">About</a>
-                        <a href="${root}/pages/contact.html">Contact</a>
-                    </div>
-                    <div class="nav-right">
-                        <!-- <a href="${root}/pages/login.html" class="login-btn">Login</a> -->
+                <div class="nav-menu" id="privateNavMenu" style="gap: 30px;">
+                    <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+                        <a href="${root}/pages/dashboard.html" class="login-btn" style="text-decoration: none; text-align: center;">Dashboard</a>
+                        <button id="privateLogoutBtn" class="login-btn" style="cursor: pointer; font-family: inherit;">Log Out</button>
                         <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
                     </div>
                 </div>
             </nav>
         `;
 
-        const hamburger = this.querySelector('#hamburgerMenu');
-        const navMenu = this.querySelector('#navMenu');
+        // Hamburger Menu Logic
+        const hamburger = this.querySelector('#privateHamburgerMenu');
+        const navMenu = this.querySelector('#privateNavMenu');
         
         hamburger.addEventListener('click', (event) => {
             event.stopPropagation(); 
@@ -49,6 +53,7 @@ class AppHeader extends HTMLElement {
             }
         });
 
+        // Dark Mode Logic
         const themeToggle = this.querySelector('#themeToggle');
         const html = document.documentElement; 
         const body = document.body;            
@@ -78,75 +83,7 @@ class AppHeader extends HTMLElement {
     }
 }
 
-// --- 2. THE BOTTOM BAR COMPONENT ---
-class AppFooter extends HTMLElement {
-    connectedCallback() {
-        const isInsidePages = window.location.pathname.includes('/pages/');
-        const root = isInsidePages ? '..' : '.'; 
-
-        this.innerHTML = `
-            <footer class="footer">
-                <div class="footer-links">
-                    <a href="${root}/pages/privacy.html">Privacy Notice</a>
-                    <a href="${root}/pages/terms.html">Terms and Conditions</a>
-                    <a href="${root}/pages/contact.html">Contact Us</a>
-                    <a href="${root}/pages/faq.html">FAQ</a>
-                </div>
-                <p class="footer-copy">&copy; 2026 InByte.date. All rights reserved.</p>
-            </footer>
-            
-            <button id="scrollTopBtn" class="scroll-to-top" aria-label="Scroll to top">
-                ↑
-            </button>
-        `;
-
-        const scrollBtn = this.querySelector('#scrollTopBtn');
-        
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                scrollBtn.classList.add('show');
-            } else {
-                scrollBtn.classList.remove('show');
-            }
-        });
-
-        scrollBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    }
-}
-
-// --- 3. THE PRIVATE TOP BAR (Dashboard & Generator) ---
-class PrivateHeader extends HTMLElement {
-    connectedCallback() {
-        const path = window.location.pathname;
-        const isSubfolder = path.includes('/pages/') || path.includes('/web-generator/') || path.includes('/invite/');
-        const root = isSubfolder ? '..' : '.';
-
-        const isDashboard = path.includes('dashboard.html');
-        const logoHref = isDashboard ? '#' : `${root}/pages/dashboard.html`;
-        const logoAction = isDashboard ? 'onclick="window.location.reload()"' : '';
-
-        this.innerHTML = `
-            <nav class="navbar" style="justify-content: space-between;">
-                <a href="${logoHref}" ${logoAction} class="logo-container">
-                    <img src="${root}/assets/inbyte.png" alt="InByte Logo" class="nav-logo-img">
-                    <div class="logo-text">
-                        <span style="color: #f1c1c8;">In</span><span style="color: #8e5968;">Byte</span><span>.date</span>
-                    </div>
-                </a>
-                <div class="nav-right" style="flex: 0;">
-                    <button id="privateLogoutBtn" class="login-btn" style="cursor: pointer; font-family: inherit;">Log Out</button>
-                </div>
-            </nav>
-        `;
-    }
-}
-
-// --- 4. THE PRIVATE BOTTOM BAR ---
+// --- PRIVATE BOTTOM BAR ---
 class PrivateFooter extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
@@ -157,8 +94,6 @@ class PrivateFooter extends HTMLElement {
     }
 }
 
-customElements.define('app-header', AppHeader);
-customElements.define('app-footer', AppFooter);
 customElements.define('private-header', PrivateHeader);
 customElements.define('private-footer', PrivateFooter);
 
