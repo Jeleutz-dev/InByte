@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBMiOy1uO1_eSHkTW6Af4HetzYiBxLNrZE",
+    apiKey: "AIzaSyBgBJP3T_-IX68jvkZiUhbpAT076CQAWAQ",
     authDomain: "inbyte-95cd5.firebaseapp.com",
     projectId: "inbyte-95cd5",
     storageBucket: "inbyte-95cd5.firebasestorage.app",
