@@ -135,6 +135,8 @@ window.initializeInvite = function(customData) {
         document.getElementById('locationPlace').textContent = locVal;
         document.getElementById('miniMap').src = 'https://maps.google.com/maps?q=' + encodeURIComponent(locVal) + '&t=m&z=14&output=embed';
         
+        mapToggleBtn.style.display = 'inline';
+        
         mapToggleBtn.addEventListener('click', function() {
             if (mapContainer.classList.contains('show-map')) {
                 mapContainer.classList.remove('show-map');

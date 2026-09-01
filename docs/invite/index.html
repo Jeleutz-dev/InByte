@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Date RSVP</title>
+    
+    <!-- Neutral title so it doesn't spoil the surprise -->
+    <title>A Special message for you!</title>
+
+    <!-- Open Graph Meta Tags for Link Previews (Messenger, FB, etc.) -->
+    <meta property="og:title" content="You've got a message!" />
+    <meta property="og:description" content="Tap to open your digital envelope." />
+    <meta property="og:image" content="https://inbyte.date/assets/inbyte.png" /> <!-- Put a neutral image path here, or leave a subtle placeholder -->
+    <meta property="og:type" content="website" />
+
     <link rel="icon" id="pageIcon" type="image/png" href="../assets/spideyyy.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="../css/invite.css">
-    
     <script src="../js/invite.js" defer></script>
 </head>
 <body>
@@ -51,14 +59,14 @@
             <p id="locLine"><strong>Location:</strong> <span id="locationPlace"></span> <br>
                 <span id="mapToggleBtn" class="map-toggle highlight" style="display:none;">(View Map)</span>
             </p>
+
+            <div id="mapContainer" style="display: none; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <iframe id="miniMap" width="100%" height="150" frameborder="0" style="border:0; display: block;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            </div>
             
             <div id="countdownContainer" style="display: none; margin: 20px auto 0 auto; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
                 <span style="font-size: 0.9rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Time Remaining</span><br>
                 <span id="countdownText" class="highlight" style="font-size: 1.3rem; font-weight: 600;"></span>
-            </div>
-
-            <div id="mapContainer" style="display: none; margin-top: 15px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                <iframe id="miniMap" width="100%" height="150" frameborder="0" style="border:0; display: block;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
             </div>
         </div>
 
