@@ -171,7 +171,6 @@
 /* --- THEMES SECTION --- */
 .themes-section {
     padding: 80px 20px;
-    background-color: var(--hover-bg);
     text-align: center;
 }
 
@@ -368,7 +367,7 @@
 /* --- HOME DEVELOPER SECTION --- */
 .home-dev-section {
     padding: 100px 20px;
-    background-color: var(--hover-bg);
+    /* background-color: var(--hover-bg); */
     text-align: center;
 }
 .dev-preview-card {

@@ -10,6 +10,27 @@ class PrivateHeader extends HTMLElement {
         const logoAction = isDashboard ? 'onclick="window.location.reload()"' : '';
 
         this.innerHTML = `
+            <style>
+                .dashboard-nav-link {
+                    text-decoration: none;
+                    text-align: center;
+                    font-family: inherit;
+                    font-size: 1rem;
+                    font-weight: 1000;
+                    background: transparent;
+                    border: none;
+                    padding: 8px 12px;
+                    cursor: pointer;
+                    color: #2b2b2b; /* Light mode default */
+                    transition: color 0.3s ease;
+                }
+                
+                /* When the body has the dark-mode class, switch the color */
+                .dark-mode .dashboard-nav-link {
+                    color: #fff;
+                }
+            </style>
+            
             <nav class="navbar">
                 <a href="${logoHref}" ${logoAction} class="logo-container">
                     <img src="${root}/assets/inbyte.png" alt="InByte Logo" class="nav-logo-img">
@@ -27,8 +48,9 @@ class PrivateHeader extends HTMLElement {
 
                 <div class="nav-menu" id="privateNavMenu" style="gap: 30px;">
                     <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
-                        <a href="${root}/pages/dashboard.html" class="login-btn" style="text-decoration: none; text-align: center;">Dashboard</a>
-                        <button id="privateLogoutBtn" class="login-btn" style="cursor: pointer; font-family: inherit;">Log Out</button>
+                        <!-- Updated Dashboard Link -->
+                        <a href="${root}/pages/dashboard.html" class="dashboard-nav-link">Dashboard</a>
+                        <button id="privateLogoutBtn" class="login-btn" style="cursor: pointer; font-family: inherit; font-size: 1rem;">Log Out</button>
                         <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
                     </div>
                 </div>

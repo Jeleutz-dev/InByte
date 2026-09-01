@@ -165,3 +165,163 @@ window.addEventListener('pageshow', (event) => {
         window.location.reload();
     }
 });
+
+// --- WIZARD NAVIGATION LOGIC ---
+document.addEventListener("DOMContentLoaded", () => {
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stepIndicator = document.getElementById('stepIndicator');
+    const dateTypeSelect = document.getElementById('genDateType');
+    const themeContainer = document.getElementById('movieThemeContainer');
+
+    function updateWizard() {
+        if (stepIndicator) stepIndicator.innerText = `Step ${currentStep} of ${totalSteps}`;
+
+        for (let i = 1; i <= totalSteps; i++) {
+            const stepDiv = document.getElementById(`step${i}`);
+            if (stepDiv) stepDiv.style.display = (i === currentStep) ? 'block' : 'none';
+        }
+
+        if (prevBtn) prevBtn.style.display = (currentStep === 1) ? 'none' : 'block';
+        if (nextBtn) nextBtn.style.display = (currentStep === totalSteps) ? 'none' : 'block';
+
+        // Admin Bypass & Payment Logic for Step 5
+        if (currentStep === totalSteps) {
+            const paymentSection = document.getElementById('paymentSection');
+            const generateSection = document.getElementById('generateSection');
+            const step5Title = document.getElementById('step5Title');
+            const generateSubtext = document.getElementById('generateSubtext');
+
+            if (currentUser && currentUser.email === 'jeleutz19@gmail.com') {
+                // Admin Bypass
+                if (paymentSection) paymentSection.style.display = 'none';
+                if (generateSection) generateSection.style.display = 'block';
+                if (step5Title) step5Title.innerText = 'Admin Access Granted';
+                if (generateSubtext) generateSubtext.innerText = 'Payment bypassed. Ready to create.';
+            } else {
+                // Standard User
+                if (paymentSection) paymentSection.style.display = 'block';
+                if (generateSection) generateSection.style.display = 'none';
+                if (step5Title) step5Title.innerText = 'Complete Your Order';
+            }
+        }
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateWizard();
+            }
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentStep > 1) {
+                currentStep--;
+                updateWizard();
+            }
+        });
+    }
+
+    if (dateTypeSelect && themeContainer) {
+        dateTypeSelect.addEventListener('change', (e) => {
+            themeContainer.style.display = (e.target.value === 'Movie date') ? 'block' : 'none';
+        });
+    }
+
+    // --- PAYMONGO CHECKOUT LOGIC (TEST MODE ONLY) ---
+    const payBtn = document.getElementById('payBtn');
+    if (payBtn) {
+        payBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // 1. Save all wizard input values to sessionStorage before leaving the page
+            const formDataToSave = {
+                name: document.getElementById('genName')?.value || '',
+                movie: document.getElementById('genMovie')?.value || '',
+                mainQ: document.getElementById('genMainQ')?.value || '',
+                subQ: document.getElementById('genSubQ')?.value || '',
+                date: document.getElementById('genDate')?.value || '',
+                time: document.getElementById('genTime')?.value || '',
+                loc: document.getElementById('genLoc')?.value || '',
+                msg: quill.root.innerHTML,
+                img: uploadedImageUrl
+            };
+            sessionStorage.setItem('pendingInviteData', JSON.stringify(formDataToSave));
+
+            payBtn.innerText = "Connecting to PayMongo... ⏳";
+            payBtn.disabled = true;
+
+            try {
+                // Ping your secure backend (which handles the secret key and payload)
+                const response = await fetch("https://us-central1-inbyte-95cd5.cloudfunctions.net/createCheckout", {
+                    method: "POST"
+                });
+
+                const data = await response.json();
+
+                if (data.data && data.data.attributes.checkout_url) {
+                    window.location.href = data.data.attributes.checkout_url;
+                } else {
+                    console.error("PayMongo Error:", data);
+                    throw new Error("Unable to create checkout session");
+                }
+            } catch (err) {
+                console.error("Payment error:", err);
+                alert("Failed to initialize payment. Check console for details.");
+                payBtn.innerText = "Pay to Unlock";
+                payBtn.disabled = false;
+            }
+        });
+    }
+
+    // --- HANDLE RETURN URL AFTER PAYMENT ---
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment') === 'success') {
+        currentStep = 5; 
+        
+        // Restore the saved form inputs from sessionStorage
+        const savedDataJson = sessionStorage.getItem('pendingInviteData');
+        if (savedDataJson) {
+            const data = JSON.parse(savedDataJson);
+            if (document.getElementById('genName')) document.getElementById('genName').value = data.name;
+            if (document.getElementById('genMovie')) document.getElementById('genMovie').value = data.movie;
+            if (document.getElementById('genMainQ')) document.getElementById('genMainQ').value = data.mainQ;
+            if (document.getElementById('genSubQ')) document.getElementById('genSubQ').value = data.subQ;
+            if (document.getElementById('genDate')) document.getElementById('genDate').value = data.date;
+            if (document.getElementById('genTime')) document.getElementById('genTime').value = data.time;
+            if (document.getElementById('genLoc')) document.getElementById('genLoc').value = data.loc;
+            if (data.msg && data.msg !== '<p><br></p>') quill.root.innerHTML = data.msg;
+            if (data.img) uploadedImageUrl = data.img;
+            
+            // Clear storage so it doesn't linger
+            sessionStorage.removeItem('pendingInviteData');
+        }
+
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        updateWizard();
+        
+        const paymentSection = document.getElementById('paymentSection');
+        const generateSection = document.getElementById('generateSection');
+        const step5Title = document.getElementById('step5Title');
+        const generateSubtext = document.getElementById('generateSubtext');
+
+        if (paymentSection) paymentSection.style.display = 'none';
+        if (generateSection) generateSection.style.display = 'block';
+        if (step5Title) step5Title.innerText = 'Payment Successful! 🎉';
+        if (generateSubtext) {
+            generateSubtext.innerText = 'Your payment was received. Click below to generate your link!';
+            generateSubtext.style.color = '#28a745';
+        }
+    } else {
+        updateWizard();
+    }
+});

@@ -27,67 +27,117 @@
     <private-header></private-header>
 
     <main class="generator-container">
-        <div class="generator-card">
-            <h2>Create a Custom Invite</h2>
+        <div class="generator-card" style="position: relative; min-height: 400px; display: flex; flex-direction: column;">
             
-            <div class="form-grid">
-                <div>
-                    <label>Invitee's Name</label>
-                    <input type="text" id="genName" placeholder="e.g., Erika">
-                </div>
-                
-                <div>
-                    <label>Movie Title</label>
-                    <select id="genMovie">
-                        <option value="Spiderman: Brand New Day">Spiderman: Brand New Day</option>
-                        <option value="Avengers: Doomsday">Avengers: Doomsday</option>
-                        <option value="Insidious: Out of the Further">Insidious: Out of the Further</option>
-                    </select>
-                </div>
+            <div id="stepIndicator" style="text-align: center; color: var(--primary-color); font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;">Step 1 of 5</div>
+            <h2 style="margin-top: 0;">Create a Custom Invite</h2>
+            
+            <!-- Step 1: Core Details -->
+            <div class="wizard-step" id="step1">
+                <div class="form-grid">
+                    <div>
+                        <label>Invitee's Name</label>
+                        <input type="text" id="genName" placeholder="e.g., Erika">
+                    </div>
+                    
+                    <div>
+                        <label>Date Type</label>
+                        <select id="genDateType">
+                            <option value="Movie date" selected>Movie Date</option>
+                        </select>
+                    </div>
 
-                <div>
-                    <label>Main Question (Optional)</label>
-                    <input type="text" id="genMainQ" placeholder="e.g., will you go on a movie date with me?">
-                </div>
-                
-                <div>
-                    <label>Sub Text (Optional)</label>
-                    <input type="text" id="genSubQ" placeholder="e.g., I bought tickets!">
-                </div>
-                
-                <div>
-                    <label>Date & Time (Time is optional)</label>
-                    <div class="date-time-group">
-                        <input type="date" id="genDate">
-                        <input type="time" id="genTime">
+                    <div id="movieThemeContainer" style="grid-column: 1 / -1;">
+                        <label>Movie Theme</label>
+                        <select id="genMovie">
+                            <option value="Spiderman: Brand New Day">Spiderman: Brand New Day</option>
+                            <option value="Avengers: Doomsday">Avengers: Doomsday</option>
+                            <option value="Insidious: Out of the Further">Insidious: Out of the Further</option>
+                        </select>
                     </div>
                 </div>
-                
-                <div>
-                    <label>Location</label>
-                    <input type="text" id="genLoc" placeholder="e.g., SM MOA Director's Club">
-                </div>
-                
-                <div class="full-width" style="margin-bottom: 5px;">
-                    <label>Pop-up Success Message</label>
-                    <div id="quillEditor"></div>
-                </div>
-                
-                <div class="input-group full-width">
-                    <label for="clientImage">Upload Custom Picture (Optional)</label>
-                    <input type="file" id="clientImage" accept="image/png, image/jpeg, image/gif" style="margin-top: 5px;">
-                    <p id="uploadStatus" style="font-size: 0.8rem; color: #888; margin-top: 5px;"></p>
-                </div>
+            </div>
 
-                <div class="full-width">
-                    <button class="generate-btn" onclick="generateLink()">Generate Custom Link</button>
+            <!-- Step 2: The Pitch -->
+            <div class="wizard-step" id="step2" style="display: none;">
+                <div class="form-grid">
+                    <div>
+                        <label>Main Question (Optional)</label>
+                        <input type="text" id="genMainQ" placeholder="e.g., will you go on a movie date with me?">
+                    </div>
+                    
+                    <div>
+                        <label>Sub Text (Optional)</label>
+                        <input type="text" id="genSubQ" placeholder="e.g., I bought tickets!">
+                    </div>
                 </div>
-                
-                <div id="resultBox" class="full-width">
-                    <strong>Here is your custom URL:</strong><br>
-                    <a href="#" id="resultLink" target="_blank"></a>
-                    <p style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0; margin-top: 10px;">Copy this link and send it to your date!</p>
+            </div>
+
+            <!-- Step 3: Logistics -->
+            <div class="wizard-step" id="step3" style="display: none;">
+                <div class="form-grid">
+                    <div>
+                        <label>Date & Time (Time is optional)</label>
+                        <div class="date-time-group">
+                            <input type="date" id="genDate">
+                            <input type="time" id="genTime">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label>Location</label>
+                        <input type="text" id="genLoc" placeholder="e.g., SM MOA Director's Club">
+                    </div>
                 </div>
+            </div>
+
+            <!-- Step 4: The Surprise -->
+            <div class="wizard-step" id="step4" style="display: none;">
+                <div class="form-grid">
+                    <div class="full-width" style="margin-bottom: 5px;">
+                        <label>Pop-up Success Message</label>
+                        <div id="quillEditor"></div>
+                    </div>
+                    
+                    <div class="input-group full-width">
+                        <label for="clientImage">Upload Custom Picture (Optional)</label>
+                        <input type="file" id="clientImage" accept="image/png, image/jpeg, image/gif" style="margin-top: 5px;">
+                        <p id="uploadStatus" style="font-size: 0.8rem; color: #888; margin-top: 5px;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Generate & Payment Placeholder -->
+            <div class="wizard-step" id="step5" style="display: none;">
+                <div class="form-grid">
+                    <div class="full-width" style="text-align: center; padding: 20px 0;">
+                        <h3 id="step5Title" style="margin-bottom: 10px;">Complete Your Order</h3>
+                        
+                        <!-- Normal User Payment Section -->
+                        <div id="paymentSection">
+                            <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px;">Unlock your custom invitation to finalize the link.</p>
+                            <button id="payBtn" class="generate-btn" style="background: #28a745;">Pay to Unlock</button>
+                        </div>
+
+                        <!-- Admin / Post-Payment Section -->
+                        <div id="generateSection" style="display: none;">
+                            <p id="generateSubtext" style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 25px; color: var(--primary-color);">Ready to create your link.</p>
+                            <button class="generate-btn" onclick="generateLink()">Generate Custom Link</button>
+                        </div>
+                    </div>
+                    
+                    <div id="resultBox" class="full-width" style="display: none;">
+                        <strong>Here is your custom URL:</strong><br>
+                        <a href="#" id="resultLink" target="_blank"></a>
+                        <p style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0; margin-top: 10px;">Copy this link and send it to your date!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Navigation Buttons -->
+            <div class="wizard-nav" style="display: flex; justify-content: space-between; margin-top: auto; padding-top: 30px;">
+                <button id="prevBtn" style="display: none; padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-color); cursor: pointer; font-weight: 500;">Back</button>
+                <button id="nextBtn" style="padding: 10px 25px; border-radius: 8px; border: none; background: var(--primary-color); color: #fff; cursor: pointer; font-weight: 600; margin-left: auto;">Next Step</button>
             </div>
         </div>
     </main>
