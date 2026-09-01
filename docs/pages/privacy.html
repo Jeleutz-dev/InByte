@@ -128,10 +128,9 @@
     <app-header></app-header>
 
     <main class="page-container">
-        
         <div class="legal-header animate-fade">
             <h1>Privacy Notice</h1>
-            <span class="last-updated">Last Updated: August 18, 2026</span>
+            <span class="last-updated">Last Updated: September 1, 2026</span>
         </div>
 
         <div class="legal-section animate-fade delay-1">
@@ -140,40 +139,39 @@
 
         <div class="legal-section animate-fade delay-2">
             <h2>1. How Your Data is Handled</h2>
-            <p>InByte is built with a privacy-first architecture. <strong>We do not use backend databases or remote servers to store your personal invitation data.</strong> When you create an invitation, all the details you input are mathematically encoded (via Base64 encryption) directly into the unique URL generated for you.</p>
-            <p style="margin:0;">Because your data lives exclusively inside the link you share, our team cannot read, access, sell, monitor, or delete your invitation data. It remains entirely in your control.</p>
+            <p>InByte is built with a secure cloud architecture. <strong>We use Firebase Firestore to store your personal invitation data</strong> safely in the cloud, linked directly to your authenticated Google account.</p>
+            <p style="margin:0;">Any custom images you upload are securely stored using iCloud storage. Because your data is tied to your secured Gmail account login, your personal dashboard and invitation data remain entirely in your control and cannot be accessed by unauthorized users.</p>
         </div>
 
         <div class="legal-section animate-fade delay-3">
             <h2>2. Information You Provide</h2>
-            <p>When you use our generator, you may input the following details:</p>
+            <p>When you create an invitation on your dashboard, you may input the following details:</p>
             <ul>
-                <li>Invitee names</li>
-                <li>Event dates and times</li>
-                <li>Location names</li>
-                <li>Custom personal messages</li>
+                <li>Invitee names and custom personal messages</li>
+                <li>Event dates, times, and location names</li>
+                <li>Custom uploaded images and photos</li>
             </ul>
         </div>
 
         <div class="legal-section animate-fade delay-4">
-            <h2>3. Local Storage and Tracking</h2>
-            <p style="margin:0;">We do not use invasive tracking cookies or third-party advertising trackers. We utilize your browser's <strong>Local Storage</strong> strictly to save your User Interface preferences. Specifically, we store a small, anonymous text flag so our application remembers your preferred visual display mode during future visits.</p>
+            <h2>3. Authentication and Storage</h2>
+            <p style="margin:0;">We do not use invasive third-party advertising trackers. We utilize secure authentication tokens via Google Workspace to keep your account logged in safely. Additionally, we use your browser's Local Storage strictly to save your User Interface preferences, such as your dark mode display settings.</p>
         </div>
 
         <div class="legal-section animate-fade delay-5">
             <h2>4. Third-Party Integrations</h2>
-            <p>To provide you with a seamless and interactive experience, our pages utilize standard third-party services:</p>
+            <p>To provide you with a seamless experience, our platform utilizes standard third-party services:</p>
             <ul>
+                <li><strong>Firebase & Google Auth:</strong> For secure database hosting and user login authentication.</li>
                 <li><strong>Google Maps:</strong> We embed a standard Google Maps iframe to display your selected event location visually.</li>
-                <li><strong>GitHub Pages:</strong> Our static website files are hosted securely via GitHub Pages, which may temporarily log standard web request data for security routing.</li>
+                <li><strong>iCloud Storage:</strong> For secure hosting of your uploaded invitation images.</li>
             </ul>
         </div>
 
         <div class="legal-section animate-fade delay-6">
             <h2>5. Your Responsibilities</h2>
-            <p style="margin:0;">Because your invitation data is stored directly in the URL rather than behind a password-protected account, you are responsible for keeping your generated links secure. We highly advise against posting your generated invitation links on public forums or social media feeds if you do not want strangers to view your private event details.</p>
+            <p style="margin:0;">Because your invitations are saved to your personal account, you are responsible for keeping your Google account login secure. Anyone you send your generated link to will be able to view the contents of that specific invitation, so we advise sharing your links only with your intended guests.</p>
         </div>
-
     </main>
 
     <app-footer></app-footer>

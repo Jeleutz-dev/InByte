@@ -144,25 +144,42 @@
     <app-header></app-header>
 
     <main class="faq-container">
-        
         <div class="faq-header animate-fade">
             <h1>Frequently Asked Questions</h1>
-            <p>Everything you need to know about creating and sending your custom movie invitations.</p>
+            <p>Everything you need to know about creating and managing your custom movie invitations.</p>
         </div>
 
-        <!-- FAQ Item 1 -->
         <div class="faq-item animate-fade delay-1">
             <button class="faq-question">
-                Will my generated invitation link expire?
+                How do I create and manage my invitations?
                 <span class="faq-icon">+</span>
             </button>
             <div class="faq-answer">
-                <p><strong>Never!</strong> Because our app does not use a database, all of your invitation details are safely encoded directly into the URL itself. As long as you have the link saved, your invitation will work forever.</p>
+                <p>Simply log in securely with your Google account. Once signed in, you gain access to your personal dashboard where you can create, view, track views, and manage all your custom invitations in one place.</p>
             </div>
         </div>
 
-        <!-- FAQ Item 2 -->
         <div class="faq-item animate-fade delay-2">
+            <button class="faq-question">
+                Where are my details and uploaded images stored?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>Your invitation configurations are safely saved in our cloud-backed <strong>Firebase Firestore database</strong>, and any custom photos you upload are stored securely via iCloud image storage.</p>
+            </div>
+        </div>
+
+        <div class="faq-item animate-fade delay-3">
+            <button class="faq-question">
+                How is my account and link protected?
+                <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+                <p>We leverage secured Google accounts for authentication alongside strict Firestore security rules. Your links are uniquely generated, unguessable, and the data is owned exclusively by your user profile.</p>
+            </div>
+        </div>
+
+        <div class="faq-item animate-fade delay-4">
             <button class="faq-question">
                 What happens when the event date passes?
                 <span class="faq-icon">+</span>
@@ -172,8 +189,7 @@
             </div>
         </div>
 
-        <!-- FAQ Item 3 -->
-        <div class="faq-item animate-fade delay-3">
+        <div class="faq-item animate-fade delay-5">
             <button class="faq-question">
                 What happens if they try to click "No"?
                 <span class="faq-icon">+</span>
@@ -182,29 +198,6 @@
                 <p>That is the best part! The "No" button is programmed to playfully dodge their cursor. If they manage to chase it down enough times, it will eventually disappear entirely, leaving them with no choice but to say Yes!</p>
             </div>
         </div>
-
-        <!-- FAQ Item 4 -->
-        <div class="faq-item animate-fade delay-4">
-            <button class="faq-question">
-                Do you save or track my personal data?
-                <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-                <p>Absolutely not. We have a strict zero-database architecture. Your names, locations, and custom messages are compressed into your specific browser link. We literally do not have a server to store your data on, making this 100% private.</p>
-            </div>
-        </div>
-
-        <!-- FAQ Item 5 -->
-        <div class="faq-item animate-fade delay-5">
-            <button class="faq-question">
-                What is the "Insidious" Horror Theme?
-                <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-                <p>If you select the horror movie option in the generator, the invitation transforms! The background becomes ominous, the buttons change to "Enter the Further" and "Too Scared", and clicking Yes triggers a custom blackout and jumpscare animation.</p>
-            </div>
-        </div>
-
     </main>
 
     <app-footer></app-footer>
