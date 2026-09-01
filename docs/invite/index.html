@@ -153,9 +153,13 @@
                     if (window.initializeInvite) {
                         window.initializeInvite(data);
                     }
-                    
+
                     if (!params.has('preview')) {
-                        await updateDoc(docRef, { views: increment(1) });
+                        try {
+                            await updateDoc(docRef, { views: increment(1) });
+                        } catch (updateError) {
+                            console.warn("Guest view - counter update ignored.");
+                        }
                     }
                 } else {
                     document.body.innerHTML = "<h2 style='text-align:center; color:#fff; padding-top:20vh; font-family:sans-serif;'>This invite does not exist.</h2>";

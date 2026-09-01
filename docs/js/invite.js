@@ -99,17 +99,26 @@ window.initializeInvite = function(customData) {
         if (!isNaN(countDownDate)) {
             document.getElementById('countdownContainer').style.display = 'block';
             let x = setInterval(function() {
+                let countdownEl = document.getElementById('countdownText');
+                
+                // Safety check: Stop the timer if the HTML element no longer exists
+                if (!countdownEl) {
+                    clearInterval(x);
+                    return;
+                }
+
                 let now = new Date().getTime();
                 let distance = countDownDate - now;
+                
                 if (distance < 0) {
                     clearInterval(x);
-                    document.getElementById('countdownText').innerHTML = "It's Movie Time!";
+                    countdownEl.innerHTML = "It's Movie Time!";
                 } else {
                     let days = Math.floor(distance / (1000 * 60 * 60 * 24));
                     let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    document.getElementById('countdownText').innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+                    countdownEl.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
                 }
             }, 1000);
         }
