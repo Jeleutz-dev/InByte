@@ -22,7 +22,7 @@ exports.createCheckout = onRequest((req, res) => {
                     line_items: [
                         {
                             currency: "PHP",
-                            amount: 5000, // 5000 centavos = ₱50.00
+                            amount: 24900, // 5000 centavos = ₱50.00
                             name: "InByte Custom Invitation",
                             quantity: 1,
                             description: "Interactive movie date invite link"
