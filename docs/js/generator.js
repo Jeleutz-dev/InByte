@@ -100,6 +100,13 @@ window.generateLink = async function() {
         return;
     }
 
+    // 1. Target the button and disable it immediately to block spam clicks
+    const genBtn = document.getElementById('generateBtn');
+    if (genBtn) {
+        genBtn.disabled = true;
+        genBtn.innerText = "Saving... ⏳";
+    }
+
     let dateVal = document.getElementById('genDate').value;
     let timeVal = document.getElementById('genTime').value;
     let formattedDate = "";
@@ -154,9 +161,20 @@ window.generateLink = async function() {
         resultLink.href = finalUrl;
         resultLink.textContent = finalUrl;
 
+        // 2. Hide the button entirely once generation is successful
+        if (genBtn) {
+            genBtn.style.display = 'none';
+        }
+
     } catch (e) {
         console.error("Error saving document to Firestore: ", e);
         alert("Failed to generate link. Check console for details.");
+        
+        // 3. Re-enable the button if there is an error so they can try again
+        if (genBtn) {
+            genBtn.disabled = false;
+            genBtn.innerText = "Generate Custom Link";
+        }
     }
 };
 
