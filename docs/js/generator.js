@@ -318,11 +318,34 @@ document.addEventListener("DOMContentLoaded", () => {
         if (paymentStatus === 'success') {
             if (paymentSection) paymentSection.style.display = 'none';
             if (generateSection) generateSection.style.display = 'block';
-            if (step5Title) step5Title.innerText = 'Payment Successful! 🎉';
+            
+            // 1. Show a loading state to prevent the user from leaving
+            if (step5Title) step5Title.innerText = 'Payment Successful! Generating Link... ⏳';
             if (generateSubtext) {
-                generateSubtext.innerText = 'Your payment was received. Click below to generate your link!';
-                generateSubtext.style.color = '#28a745';
+                generateSubtext.innerText = 'Please do not close this page. We are saving your invitation...';
+                generateSubtext.style.color = '#ffaa00'; // Orange loading text
             }
+
+            // 2. Automatically trigger the generation function after a tiny delay to ensure the DOM is ready
+            setTimeout(async () => {
+                try {
+                    await window.generateLink();
+                    
+                    // 3. Update text to success once Firestore saves the data
+                    if (step5Title) step5Title.innerText = 'Invitation Created! 🎉';
+                    if (generateSubtext) {
+                        generateSubtext.innerText = 'Your custom link is ready and safely saved to your dashboard.';
+                        generateSubtext.style.color = '#28a745'; // Green success text
+                    }
+                } catch (err) {
+                    console.error("Auto-generate failed:", err);
+                    if (step5Title) step5Title.innerText = 'Payment Received!';
+                    if (generateSubtext) {
+                        generateSubtext.innerText = 'Auto-generation lagged. Please click the generate button below to finish.';
+                        generateSubtext.style.color = '#dc3545'; // Red error text
+                    }
+                }
+            }, 800);
         } else if (paymentStatus === 'cancelled') {
             if (step5Title) step5Title.innerText = 'Payment Cancelled';
             if (generateSubtext) {
