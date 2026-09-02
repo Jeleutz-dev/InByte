@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBgBJP3T_-IX68jvkZiUhbpAT076CQAWAQ",
@@ -93,20 +93,8 @@ customElements.whenDefined('private-header').then(() => {
     }, 50);
 });
 
-// Generator Logic
-window.generateLink = async function() {
-    if (!currentUser) {
-        alert("You must be logged in to create an invite.");
-        return;
-    }
-
-    // 1. Target the button and disable it immediately to block spam clicks
-    const genBtn = document.getElementById('generateBtn');
-    if (genBtn) {
-        genBtn.disabled = true;
-        genBtn.innerText = "Saving... ⏳";
-    }
-
+// Helper to bundle form data cleanly
+function getFormData() {
     let dateVal = document.getElementById('genDate').value;
     let timeVal = document.getElementById('genTime').value;
     let formattedDate = "";
@@ -132,8 +120,7 @@ window.generateLink = async function() {
         richMessage = "";
     }
 
-    const inviteData = {
-        userId: currentUser.uid,
+    return {
         name: document.getElementById('genName').value,
         movie: document.getElementById('genMovie').value,
         date: formattedDate,
@@ -141,7 +128,35 @@ window.generateLink = async function() {
         msg: richMessage, 
         mainQ: document.getElementById('genMainQ').value,
         subQ: document.getElementById('genSubQ').value,
-        img: uploadedImageUrl,
+        img: uploadedImageUrl
+    };
+}
+
+function displayFinalLink(inviteId, movieName) {
+    const finalUrl = `https://inbyte.date/invite/?id=${inviteId}&m=${encodeURIComponent(movieName || '')}`;
+    const resultBox = document.getElementById('resultBox');
+    const resultLink = document.getElementById('resultLink');
+    const genBtn = document.getElementById('generateBtn');
+
+    if (resultBox) resultBox.style.display = 'block';
+    if (resultLink) {
+        resultLink.href = finalUrl;
+        resultLink.textContent = finalUrl;
+    }
+    if (genBtn) genBtn.style.display = 'none';
+}
+
+// Admin only direct link generator (bypasses PayMongo payment)
+async function adminGenerateLink() {
+    const genBtn = document.getElementById('generateBtn');
+    if (genBtn) {
+        genBtn.disabled = true;
+        genBtn.innerText = "Generating admin invite... ⏳";
+    }
+
+    const inviteData = {
+        ...getFormData(),
+        userId: currentUser.uid,
         status: 'active',
         createdAt: serverTimestamp(),
         updatedAt: Date.now(),
@@ -150,33 +165,16 @@ window.generateLink = async function() {
 
     try {
         const docRef = await addDoc(collection(db, "invites"), inviteData);
-        
-        let baseUrl = 'https://inbyte.date/invite/';
-        const finalUrl = baseUrl + '?id=' + docRef.id + '&m=' + encodeURIComponent(inviteData.movie);
-        
-        const resultBox = document.getElementById('resultBox');
-        const resultLink = document.getElementById('resultLink');
-        
-        resultBox.style.display = 'block';
-        resultLink.href = finalUrl;
-        resultLink.textContent = finalUrl;
-
-        // 2. Hide the button entirely once generation is successful
-        if (genBtn) {
-            genBtn.style.display = 'none';
-        }
-
+        displayFinalLink(docRef.id, inviteData.movie);
     } catch (e) {
-        console.error("Error saving document to Firestore: ", e);
-        alert("Failed to generate link. Check console for details.");
-        
-        // 3. Re-enable the button if there is an error so they can try again
+        console.error("Admin bypass failed:", e);
+        alert("Failed to generate link.");
         if (genBtn) {
             genBtn.disabled = false;
             genBtn.innerText = "Generate Custom Link";
         }
     }
-};
+}
 
 window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
@@ -194,6 +192,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const stepIndicator = document.getElementById('stepIndicator');
     const dateTypeSelect = document.getElementById('genDateType');
     const themeContainer = document.getElementById('movieThemeContainer');
+    const genBtn = document.getElementById('generateBtn');
+
+    if (genBtn) {
+        genBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentUser && currentUser.email === 'jeleutz19@gmail.com') {
+                adminGenerateLink();
+            }
+        });
+    }
 
     function updateWizard() {
         if (stepIndicator) stepIndicator.innerText = `Step ${currentStep} of ${totalSteps}`;
@@ -206,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (prevBtn) prevBtn.style.display = (currentStep === 1) ? 'none' : 'block';
         if (nextBtn) nextBtn.style.display = (currentStep === totalSteps) ? 'none' : 'block';
 
-        // Admin Bypass & Payment Logic for Step 5
+        // Step 5 handling
         if (currentStep === totalSteps) {
             const paymentSection = document.getElementById('paymentSection');
             const generateSection = document.getElementById('generateSection');
@@ -214,13 +222,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const generateSubtext = document.getElementById('generateSubtext');
 
             if (currentUser && currentUser.email === 'jeleutz19@gmail.com') {
-                // Admin Bypass
+                // Admin Bypass View
                 if (paymentSection) paymentSection.style.display = 'none';
                 if (generateSection) generateSection.style.display = 'block';
                 if (step5Title) step5Title.innerText = 'Admin Access Granted';
                 if (generateSubtext) generateSubtext.innerText = 'Payment bypassed. Ready to create.';
             } else {
-                // Standard User
+                // Regular User View
                 if (paymentSection) paymentSection.style.display = 'block';
                 if (generateSection) generateSection.style.display = 'none';
                 if (step5Title) step5Title.innerText = 'Complete Your Order';
@@ -254,46 +262,42 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- PAYMONGO CHECKOUT LOGIC (TEST MODE ONLY) ---
+    // --- PAYMONGO CHECKOUT TRIGGER ---
     const payBtn = document.getElementById('payBtn');
     if (payBtn) {
         payBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            // 1. Save all wizard input values to sessionStorage before leaving the page
-            const formDataToSave = {
-                name: document.getElementById('genName')?.value || '',
-                movie: document.getElementById('genMovie')?.value || '',
-                mainQ: document.getElementById('genMainQ')?.value || '',
-                subQ: document.getElementById('genSubQ')?.value || '',
-                date: document.getElementById('genDate')?.value || '',
-                time: document.getElementById('genTime')?.value || '',
-                loc: document.getElementById('genLoc')?.value || '',
-                msg: quill.root.innerHTML,
-                img: uploadedImageUrl
-            };
-            sessionStorage.setItem('pendingInviteData', JSON.stringify(formDataToSave));
+            if (!currentUser) {
+                alert("Please log in before proceeding.");
+                return;
+            }
 
-            payBtn.innerText = "Connecting to PayMongo... ⏳";
+            payBtn.innerText = "Creating Secure Checkout... ⏳";
             payBtn.disabled = true;
 
+            const inviteData = getFormData();
+
             try {
-                // Ping your secure backend (which handles the secret key and payload)
                 const response = await fetch("https://us-central1-inbyte-95cd5.cloudfunctions.net/createCheckout", {
-                    method: "POST"
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        inviteData: inviteData,
+                        userId: currentUser.uid
+                    })
                 });
 
-                const data = await response.json();
+                const session = await response.json();
 
-                if (data.data && data.data.attributes.checkout_url) {
-                    window.location.href = data.data.attributes.checkout_url;
+                if (session.data && session.data.attributes && session.data.attributes.checkout_url) {
+                    window.location.href = session.data.attributes.checkout_url;
                 } else {
-                    console.error("PayMongo Error:", data);
-                    throw new Error("Unable to create checkout session");
+                    throw new Error("Missing checkout_url from PayMongo response.");
                 }
             } catch (err) {
                 console.error("Payment error:", err);
-                alert("Failed to initialize payment. Check console for details.");
+                alert("Failed to initialize payment gateway. Please try again.");
                 payBtn.innerText = "Pay to Unlock";
                 payBtn.disabled = false;
             }
@@ -303,29 +307,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- HANDLE RETURN URL AFTER PAYMENT ---
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
+    const returnInviteId = urlParams.get('invite_id');
 
     if (paymentStatus === 'success' || paymentStatus === 'cancelled') {
         currentStep = 5; 
-        
-        // Restore the saved form inputs from sessionStorage
-        const savedDataJson = sessionStorage.getItem('pendingInviteData');
-        if (savedDataJson) {
-            const data = JSON.parse(savedDataJson);
-            if (document.getElementById('genName')) document.getElementById('genName').value = data.name;
-            if (document.getElementById('genMovie')) document.getElementById('genMovie').value = data.movie;
-            if (document.getElementById('genMainQ')) document.getElementById('genMainQ').value = data.mainQ;
-            if (document.getElementById('genSubQ')) document.getElementById('genSubQ').value = data.subQ;
-            if (document.getElementById('genDate')) document.getElementById('genDate').value = data.date;
-            if (document.getElementById('genTime')) document.getElementById('genTime').value = data.time;
-            if (document.getElementById('genLoc')) document.getElementById('genLoc').value = data.loc;
-            if (data.msg && data.msg !== '<p><br></p>') quill.root.innerHTML = data.msg;
-            if (data.img) uploadedImageUrl = data.img;
-            
-            // Clear storage so it doesn't linger
-            sessionStorage.removeItem('pendingInviteData');
-        }
-
-        window.history.replaceState({}, document.title, window.location.pathname);
         updateWizard();
         
         const paymentSection = document.getElementById('paymentSection');
@@ -337,38 +322,38 @@ document.addEventListener("DOMContentLoaded", () => {
             if (paymentSection) paymentSection.style.display = 'none';
             if (generateSection) generateSection.style.display = 'block';
             
-            // 1. Show a loading state to prevent the user from leaving
-            if (step5Title) step5Title.innerText = 'Payment Successful! Generating Link... ⏳';
+            if (step5Title) step5Title.innerText = 'Payment Confirmed! Finalizing Link... ⏳';
             if (generateSubtext) {
-                generateSubtext.innerText = 'Please do not close this page. We are saving your invitation...';
-                generateSubtext.style.color = '#ffaa00'; // Orange loading text
+                generateSubtext.innerText = 'Waiting for PayMongo webhook verification... Please wait.';
+                generateSubtext.style.color = '#ffaa00';
             }
 
-            // 2. Automatically trigger the generation function after a tiny delay to ensure the DOM is ready
-            setTimeout(async () => {
-                try {
-                    await window.generateLink();
-                    
-                    // 3. Update text to success once Firestore saves the data
-                    if (step5Title) step5Title.innerText = 'Invitation Created! 🎉';
-                    if (generateSubtext) {
-                        generateSubtext.innerText = 'Your custom link is ready and safely saved to your dashboard.';
-                        generateSubtext.style.color = '#28a745'; // Green success text
+            if (returnInviteId) {
+                // Listen to the document in real time. As soon as the webhook sets status to 'active', render the link.
+                const unsubscribe = onSnapshot(doc(db, "invites", returnInviteId), (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        if (data.status === 'active') {
+                            unsubscribe();
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            if (step5Title) step5Title.innerText = 'Invitation Created! 🎉';
+                            if (generateSubtext) {
+                                generateSubtext.innerText = 'Your custom link is ready and verified!';
+                                generateSubtext.style.color = '#28a745';
+                            }
+                            displayFinalLink(returnInviteId, data.movie);
+                        }
                     }
-                } catch (err) {
-                    console.error("Auto-generate failed:", err);
-                    if (step5Title) step5Title.innerText = 'Payment Received!';
-                    if (generateSubtext) {
-                        generateSubtext.innerText = 'Auto-generation lagged. Please click the generate button below to finish.';
-                        generateSubtext.style.color = '#dc3545'; // Red error text
-                    }
-                }
-            }, 800);
+                }, (error) => {
+                    console.error("Snapshot error:", error);
+                });
+            }
         } else if (paymentStatus === 'cancelled') {
+            window.history.replaceState({}, document.title, window.location.pathname);
             if (step5Title) step5Title.innerText = 'Payment Cancelled';
             if (generateSubtext) {
-                generateSubtext.innerText = 'Your transaction was not completed. You can click below to try again.';
-                generateSubtext.style.color = '#dc3545'; // Red text for cancelled
+                generateSubtext.innerText = 'Your transaction was cancelled. No charges were made.';
+                generateSubtext.style.color = '#dc3545';
             }
             if (paymentSection) paymentSection.style.display = 'block';
             if (generateSection) generateSection.style.display = 'none';
