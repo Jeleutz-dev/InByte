@@ -284,7 +284,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- HANDLE RETURN URL AFTER PAYMENT ---
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('payment') === 'success') {
+    const paymentStatus = urlParams.get('payment');
+
+    if (paymentStatus === 'success' || paymentStatus === 'cancelled') {
         currentStep = 5; 
         
         // Restore the saved form inputs from sessionStorage
@@ -306,7 +308,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         window.history.replaceState({}, document.title, window.location.pathname);
-        
         updateWizard();
         
         const paymentSection = document.getElementById('paymentSection');
@@ -314,12 +315,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const step5Title = document.getElementById('step5Title');
         const generateSubtext = document.getElementById('generateSubtext');
 
-        if (paymentSection) paymentSection.style.display = 'none';
-        if (generateSection) generateSection.style.display = 'block';
-        if (step5Title) step5Title.innerText = 'Payment Successful! 🎉';
-        if (generateSubtext) {
-            generateSubtext.innerText = 'Your payment was received. Click below to generate your link!';
-            generateSubtext.style.color = '#28a745';
+        if (paymentStatus === 'success') {
+            if (paymentSection) paymentSection.style.display = 'none';
+            if (generateSection) generateSection.style.display = 'block';
+            if (step5Title) step5Title.innerText = 'Payment Successful! 🎉';
+            if (generateSubtext) {
+                generateSubtext.innerText = 'Your payment was received. Click below to generate your link!';
+                generateSubtext.style.color = '#28a745';
+            }
+        } else if (paymentStatus === 'cancelled') {
+            if (step5Title) step5Title.innerText = 'Payment Cancelled';
+            if (generateSubtext) {
+                generateSubtext.innerText = 'Your transaction was not completed. You can click below to try again.';
+                generateSubtext.style.color = '#dc3545'; // Red text for cancelled
+            }
+            if (paymentSection) paymentSection.style.display = 'block';
+            if (generateSection) generateSection.style.display = 'none';
         }
     } else {
         updateWizard();

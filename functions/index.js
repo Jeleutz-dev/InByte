@@ -28,8 +28,8 @@ exports.createCheckout = onRequest((req, res) => {
                             description: "Interactive movie date invite link"
                         }
                     ],
-                    success_url: "https://inbyte.date/docs/web-generator/index.html?payment=success",
-                    cancel_url: "https://inbyte.date/docs/web-generator/index.html?payment=cancelled"
+                    success_url: "https://inbyte.date/web-generator/index.html?payment=success",
+                    cancel_url: "https://inbyte.date/web-generator/index.html?payment=cancelled"
                 }
             }
         };
