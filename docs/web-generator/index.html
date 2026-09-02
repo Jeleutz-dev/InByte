@@ -122,7 +122,7 @@
                         <!-- Admin / Post-Payment Section -->
                         <div id="generateSection" style="display: none;">
                             <p id="generateSubtext" style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 25px; color: var(--primary-color);">Ready to create your link.</p>
-                            <button id="generateBtn" class="generate-btn" onclick="generateLink()">Generate Custom Link</button>
+                            <button id="generateBtn" class="generate-btn">Generate Custom Link</button>
                         </div>
                     </div>
                     
@@ -130,6 +130,11 @@
                         <strong>Here is your custom URL:</strong><br>
                         <a href="#" id="resultLink" target="_blank"></a>
                         <p style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0; margin-top: 10px;">Copy this link and send it to your date!</p>
+                        
+                        <!-- Home Button aligned to the right below the generated link -->
+                        <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                            <a href="../pages/dashboard.html" id="homeBtn" class="action-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 8px 20px; border-radius: 8px; font-weight: 500;">Home</a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -25,7 +25,7 @@ class AppHeader extends HTMLElement {
                         <a href="${root}/pages/contact.html">Contact</a>
                     </div>
                     <div class="nav-right">
-                        <!-- <a href="${root}/pages/login.html" class="login-btn">Login</a> -->
+                        <a href="${root}/pages/login.html" class="login-btn">Login</a>
                         <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
                     </div>
                 </div>

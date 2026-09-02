@@ -415,3 +415,163 @@
     display: inline-block;
     animation: sparkleFloat 2.5s ease-in-out infinite; 
 }
+
+
+
+/* --- STATS SECTION CARDS DESIGN --- */
+.home-stats-section {
+    max-width: 1100px;
+    margin: -40px auto 60px auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.home-stats-section .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.stat-card {
+    background: var(--nav-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 35px 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px var(--nav-shadow), var(--neon-glow);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, box-shadow 0.4s;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-color);
+    box-shadow: 0 20px 40px rgba(226, 54, 54, 0.15), 0 0 25px rgba(226, 54, 54, 0.6);
+}
+
+.stat-icon-wrapper {
+    width: 55px;
+    height: 55px;
+    background: rgba(226, 54, 54, 0.1);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px auto;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #E23636 0%, #ff758c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+}
+
+.stat-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-transform: lowercase;
+}
+
+@media (max-width: 768px) {
+    .stat-card {
+        padding: 25px 20px;
+    }
+    .stat-number {
+        font-size: 2.1rem;
+    }
+}
+
+/* --- STATS SECTION STYLING --- */
+.home-stats-section {
+    max-width: 1100px;
+    margin: -40px auto 60px auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.stats-banner-card {
+    background-color: var(--nav-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px var(--nav-shadow), var(--neon-glow);
+    padding: 40px 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Inherit dark mode transparent card style just like your other cards */
+.dark-mode .stats-banner-card {
+    background: rgba(10, 15, 30, 0.6); 
+    border: 1px solid rgba(135, 206, 235, 0.3);
+    box-shadow: var(--neon-glow);
+}
+
+.stat-item {
+    text-align: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.stat-icon-wrapper {
+    width: 45px;
+    height: 45px;
+    background: rgba(226, 54, 54, 0.1);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 12px auto;
+    font-size: 1.2rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    /* Uses text-color variable so it turns white in dark mode instead of hardcoded pink */
+    color: var(--text-color);
+    margin-bottom: 5px;
+    letter-spacing: -0.5px;
+    transition: color 0.3s ease;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-transform: lowercase;
+    transition: color 0.3s ease;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 60px;
+    background-color: var(--border-color);
+    transition: background-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .stat-divider {
+        display: none;
+    }
+    .stats-banner-card {
+        padding: 30px 20px;
+        gap: 25px;
+    }
+    .stat-number {
+        font-size: 2rem;
+    }
+}

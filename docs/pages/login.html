@@ -1,12 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<script>
-    // Only allows access if the URL ends with ?dev=true
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('dev') !== 'true') {
-        window.location.replace("../");
-    }
-</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
