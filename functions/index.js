@@ -1,4 +1,4 @@
-const { onRequest } = require("firebase-functions/v2/https");
+const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const cors = require("cors")({ origin: true });
 const crypto = require("crypto");
@@ -7,7 +7,7 @@ admin.initializeApp();
 const db = admin.firestore();
 
 // 1. CREATE CHECKOUT & PENDING INVITE
-exports.createCheckout = onRequest((req, res) => {
+exports.createCheckout = functions.https.onRequest((req, res) => {
     cors(req, res, async () => {
         if (req.method !== "POST") {
             return res.status(405).send("Method Not Allowed");
@@ -77,7 +77,7 @@ exports.createCheckout = onRequest((req, res) => {
 });
 
 // 2. SECURE PAYMONGO WEBHOOK LISTENER
-exports.paymongoWebhook = onRequest(async (req, res) => {
+exports.paymongoWebhook = functions.https.onRequest(async (req, res) => {
     if (req.method !== "POST") {
         return res.status(405).send("Method Not Allowed");
     }
@@ -89,7 +89,6 @@ exports.paymongoWebhook = onRequest(async (req, res) => {
         return res.status(400).send("Missing signature header or secret.");
     }
 
-    // Parse signature header (t=timestamp, te=test signature, li=live signature)
     const signatureParts = signatureHeader.split(",").reduce((acc, part) => {
         const [key, value] = part.trim().split("=");
         acc[key] = value;
@@ -100,7 +99,6 @@ exports.paymongoWebhook = onRequest(async (req, res) => {
     const receivedSig = signatureParts.li || signatureParts.te;
     const rawPayload = req.rawBody ? req.rawBody.toString() : JSON.stringify(req.body);
 
-    // Compute expected HMAC SHA256 signature
     const computedSig = crypto
         .createHmac("sha256", webhookSecret)
         .update(`${timestamp}.${rawPayload}`)
