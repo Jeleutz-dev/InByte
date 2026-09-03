@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Invites - InByte</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"> 
+    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/private.css">
+    <script src="../js/user-layout.js" defer></script>
+
+</head>
+<body>
+    <private-header></private-header>
+
+    <main class="dashboard-container invite-list-wrapper">
+        <div class="invite-list-header">
+            <h1>My Invites <span class="floating-sparkle">✨</span></h1>
+            <a href="./generator.html" class="create-btn"><span>+</span> Create New</a>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="inviteSearchInput" class="search-input" placeholder="Search by recipient name or movie...">
+        </div>
+
+        <div class="filter-controls">
+            <button class="filter-btn active" data-filter="active">Active Links</button>
+            <button class="filter-btn" data-filter="deactivated">Deactivated Links</button>
+            <button class="filter-btn" data-filter="deleted">Deleted Links</button>
+        </div>
+
+        <section class="recent-invites" style="width: 100%;">
+            <div id="invitesList" class="empty-state">
+                <p>Loading your invites...</p>
+            </div>
+        </section>
+    </main>
+
+    <private-footer></private-footer>
+
+    <script type="module" src="../js/invite-list.js"></script>
+</body>
+</html>
