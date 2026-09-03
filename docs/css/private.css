@@ -231,3 +231,66 @@ input.search-input:focus {
 .dark-mode .filter-btn.active { 
     box-shadow: 0 0 15px rgba(226, 54, 54, 0.4); 
 }
+
+/* --- THREE-DOT ACTION MENU --- */
+.kebab-container {
+    position: relative;
+    display: flex;
+    align-items: stretch; /* Forces it to stretch to the same height as View */
+}
+
+.kebab-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 1.2rem;
+    padding: 6px 14px; /* Matches the exact padding of your action buttons */
+    border-radius: 6px; /* Matches the exact border-radius */
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Match the exact hover and dark mode states of the View button */
+.kebab-btn:hover { 
+    background: var(--text-color); 
+    color: var(--nav-bg); 
+}
+.dark-mode .kebab-btn { 
+    border-color: rgba(255, 255, 255, 0.3); 
+    color: #f5f5f5; 
+}
+.dark-mode .kebab-btn:hover { 
+    background: rgba(255, 255, 255, 0.1); 
+    border-color: #87CEEB; 
+    color: #87CEEB; 
+}
+
+.action-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 5px);
+    background: var(--nav-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px var(--nav-shadow);
+    display: none;
+    flex-direction: column;
+    min-width: 130px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.action-dropdown.show { display: flex; }
+
+.action-dropdown .action-btn {
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+.action-dropdown .action-btn:last-child { border-bottom: none; }

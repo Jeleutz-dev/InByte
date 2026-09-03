@@ -21,7 +21,6 @@ let currentEditDocId = null;
 let currentEditData = null;
 window.docToDelete = null; 
 
-// Initialize Quill
 window.editQuill = new Quill('#editQuillEditor', {
     theme: 'snow',
     placeholder: 'Write your success message here...',
@@ -38,7 +37,6 @@ let removeExistingImage = false;
 const editImageInput = document.getElementById('editImage');
 const editUploadStatus = document.getElementById('editUploadStatus');
 
-// Global Modal Functions
 window.closeEditModal = function() { 
     document.getElementById('editModal').classList.remove('active'); 
 };
@@ -62,7 +60,6 @@ document.getElementById('removeImgBtn').addEventListener('click', function() {
     document.getElementById('currentImageContainer').style.display = 'none';
 });
 
-// Cloudinary Logic
 if (editImageInput) {
     editImageInput.addEventListener('change', async (event) => {
         const file = event.target.files[0];
@@ -98,7 +95,6 @@ if (editImageInput) {
     });
 }
 
-// Load Dashboard Data
 async function loadDashboardData(uid) {
     const q = query(collection(db, "invites"), where("userId", "==", uid));
     const invitesList = document.getElementById('invitesList');
@@ -118,18 +114,11 @@ async function loadDashboardData(uid) {
                 
                 if (data.status !== 'deleted') {
                     invitesArray.push({ id: docSnap.id, ...data });
-                    if (data.status !== 'deactivated') {
-                        activeLinksCount++;
-                    }
+                    activeLinksCount++;
                 }
             });
 
             invitesArray.sort((a, b) => {
-                const aActive = a.status !== 'deactivated' ? 1 : 0;
-                const bActive = b.status !== 'deactivated' ? 1 : 0;
-                
-                if (aActive !== bActive) return bActive - aActive; 
-                
                 const aTime = a.updatedAt || (a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0);
                 const bTime = b.updatedAt || (b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0);
                 return bTime - aTime;
@@ -140,58 +129,67 @@ async function loadDashboardData(uid) {
             if (invitesArray.length > 0) {
                 invitesArray.forEach((data) => {
                     const docId = data.id;
-                    const isDeactivated = data.status === 'deactivated';
                     
                     const itemDiv = document.createElement('div');
-                    itemDiv.style.cssText = `display: flex; justify-content: space-between; align-items: flex-start; padding: 25px 0; border-bottom: 1px solid var(--border-color); text-align: left; gap: 15px; ${isDeactivated ? 'opacity: 0.5;' : ''}`;
-                    
-                    const statusBadge = isDeactivated ? `<span style="font-size: 0.75rem; background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">Deactivated</span>` : '';
+                    itemDiv.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 25px 0; border-bottom: 1px solid var(--border-color); text-align: left; gap: 15px; flex-wrap: wrap;`;
 
                     const infoDiv = document.createElement('div');
                     infoDiv.style.flex = "1";
+                    infoDiv.style.minWidth = "200px";
                     infoDiv.innerHTML = `
-                        <h4 style="margin: 0; color: var(--primary-color); font-size: 1.15rem;">${data.name || 'Movie Date'} ${statusBadge}</h4>
-                        <p style="margin: 5px 0 10px 0; font-size: 0.85rem; opacity: 0.8;">${data.movie} • ${data.date || 'TBA'}</p>
-                        <a href="https://inbyte.date/invite/?id=${docId}&m=${encodeURIComponent(data.movie)}" target="_blank" style="font-size: 0.85rem; text-decoration: underline; color: var(--text-color);">View Live Link ↗</a>
+                        <h4 style="margin: 0; color: var(--primary-color); font-size: 1.15rem;">${data.name || 'Movie Date'}</h4>
+                        <p style="margin: 5px 0 5px 0; font-size: 0.85rem; opacity: 0.8;">${data.movie} • ${data.date || 'TBA'}</p>
+                        <p style="margin: 0; font-size: 0.85rem; font-weight: 600; color: var(--text-color); opacity: 0.9;">
+                            ${data.views || 0} <span style="font-weight: normal; opacity: 0.7;">Views</span>
+                        </p>
                     `;
 
                     const rightColumn = document.createElement('div');
-                    rightColumn.style.cssText = "display: flex; flex-direction: column; align-items: flex-end; gap: 15px;";
+                    rightColumn.style.cssText = "display: flex; align-items: stretch; gap: 8px;";
 
-                    const actionsDiv = document.createElement('div');
-                    actionsDiv.style.display = 'flex';
-                    actionsDiv.style.gap = '8px';
-                    actionsDiv.style.flexWrap = 'wrap';
-                    actionsDiv.style.justifyContent = 'flex-end';
+                    const viewBtn = document.createElement('button');
+                    viewBtn.className = 'action-btn view-btn';
+                    viewBtn.textContent = 'View ↗';
+                    viewBtn.style.display = 'flex';
+                    viewBtn.style.alignItems = 'center';
+                    viewBtn.onclick = () => window.open(`https://inbyte.date/invite/?id=${docId}&m=${encodeURIComponent(data.movie)}`, '_blank');
+
+                    const kebabContainer = document.createElement('div');
+                    kebabContainer.className = 'kebab-container';
+
+                    const kebabBtn = document.createElement('button');
+                    kebabBtn.className = 'kebab-btn';
+                    kebabBtn.innerHTML = '⋮';
+
+                    const dropdown = document.createElement('div');
+                    dropdown.className = 'action-dropdown';
 
                     const editBtn = document.createElement('button');
                     editBtn.className = 'action-btn edit';
                     editBtn.textContent = 'Edit';
-                    editBtn.onclick = () => window.openEditModal(docId, data);
-
-                    const toggleBtn = document.createElement('button');
-                    toggleBtn.className = `action-btn ${isDeactivated ? 'activate' : 'deactivate'}`;
-                    toggleBtn.textContent = isDeactivated ? 'Activate' : 'Deactivate';
-                    toggleBtn.onclick = () => window.toggleInviteStatus(docId, isDeactivated);
+                    editBtn.onclick = () => { dropdown.classList.remove('show'); window.openEditModal(docId, data); };
 
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'action-btn delete';
                     deleteBtn.textContent = 'Delete';
-                    deleteBtn.onclick = () => window.confirmDeleteInvite(docId);
+                    deleteBtn.onclick = () => { dropdown.classList.remove('show'); window.confirmDeleteInvite(docId); };
 
-                    actionsDiv.appendChild(editBtn);
-                    actionsDiv.appendChild(toggleBtn);
-                    actionsDiv.appendChild(deleteBtn);
+                    dropdown.appendChild(editBtn);
+                    dropdown.appendChild(deleteBtn);
 
-                    const statsDiv = document.createElement('div');
-                    statsDiv.style.textAlign = 'right';
-                    statsDiv.innerHTML = `
-                        <span style="font-size: 1.4rem; font-weight: 600;">${data.views || 0}</span>
-                        <p style="margin: 0; font-size: 0.8rem; opacity: 0.8;">Views</p>
-                    `;
+                    kebabBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        document.querySelectorAll('.action-dropdown').forEach(d => {
+                            if (d !== dropdown) d.classList.remove('show');
+                        });
+                        dropdown.classList.toggle('show');
+                    };
 
-                    rightColumn.appendChild(actionsDiv);
-                    rightColumn.appendChild(statsDiv);
+                    kebabContainer.appendChild(kebabBtn);
+                    kebabContainer.appendChild(dropdown);
+
+                    rightColumn.appendChild(viewBtn);
+                    rightColumn.appendChild(kebabContainer);
 
                     itemDiv.appendChild(infoDiv);
                     itemDiv.appendChild(rightColumn);
@@ -219,20 +217,6 @@ async function loadDashboardData(uid) {
         invitesList.innerHTML = `<p style="color: red;">Failed to load data. Please refresh.</p>`;
     }
 }
-
-// Firestore Action Functions
-window.toggleInviteStatus = async function(docId, isDeactivated) {
-    try {
-        await updateDoc(doc(db, "invites", docId), {
-            status: isDeactivated ? 'active' : 'deactivated',
-            updatedAt: Date.now()
-        });
-        loadDashboardData(currentUserId);
-    } catch (error) {
-        console.error("Error toggling status:", error);
-        alert("Failed to update status.");
-    }
-};
 
 window.confirmDeleteInvite = function(docId) {
     window.docToDelete = docId;
@@ -356,7 +340,6 @@ document.getElementById('saveEditBtn').addEventListener('click', async () => {
     }
 });
 
-// Auth Initialization
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUserId = user.uid;
@@ -368,7 +351,6 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Logout Router
 customElements.whenDefined('private-header').then(() => {
     setTimeout(() => {
         const logoutBtn = document.getElementById('privateLogoutBtn');
@@ -385,5 +367,13 @@ customElements.whenDefined('private-header').then(() => {
 window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
         window.location.reload();
+    }
+});
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.kebab-container')) {
+        document.querySelectorAll('.action-dropdown.show').forEach(menu => {
+            menu.classList.remove('show');
+        });
     }
 });

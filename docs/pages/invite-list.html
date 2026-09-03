@@ -11,8 +11,11 @@
     
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/private.css">
-    <script src="../js/user-layout.js" defer></script>
+    
+    <!-- Quill CSS for Edit Modal -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 
+    <script src="../js/user-layout.js" defer></script>
 </head>
 <body>
     <private-header></private-header>
@@ -29,7 +32,6 @@
 
         <div class="filter-controls">
             <button class="filter-btn active" data-filter="active">Active Links</button>
-            <button class="filter-btn" data-filter="deactivated">Deactivated Links</button>
             <button class="filter-btn" data-filter="deleted">Deleted Links</button>
         </div>
 
@@ -40,8 +42,70 @@
         </section>
     </main>
 
+    <!-- EDIT MODAL (Copied from Dashboard for functionality) -->
+    <div id="editModal" class="modal-overlay">
+        <div class="edit-card">
+            <button class="close-modal-btn" onclick="closeEditModal()">&times;</button>
+            <h2>Edit Invite Details</h2>
+            
+            <label>Invitee's Name (Locked)</label>
+            <input type="text" id="editName" disabled>
+            
+            <label>Movie Title (Locked)</label>
+            <input type="text" id="editMovie" disabled>
+
+            <label>Main Question</label>
+            <input type="text" id="editMainQ" placeholder="e.g., will you go on a movie date with me?">
+            
+            <label>Sub Text</label>
+            <input type="text" id="editSubQ" placeholder="e.g., I bought tickets!">
+            
+            <label>Date & Time <br><span id="currentDateDisplay" style="font-size:0.8rem; opacity:0.7; font-weight:normal;"></span></label>
+            <div class="date-time-group">
+                <input type="date" id="editDate">
+                <input type="time" id="editTime">
+            </div>
+            
+            <label>Location</label>
+            <input type="text" id="editLoc" placeholder="e.g., SM MOA Director's Club">
+            
+            <div style="margin-top: 10px;">
+                <label>Pop-up Success Message</label>
+                <div id="editQuillEditor"></div>
+            </div>
+            
+            <div class="input-group" style="margin-top: 15px;">
+                <label>Update Custom Picture (Optional)</label>
+                
+                <div id="currentImageContainer" style="display:none; margin: 10px 0; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; background: rgba(0,0,0,0.02);">
+                    <p style="font-size: 0.8rem; margin: 0 0 10px 0; opacity: 0.8;">Current Image:</p>
+                    <img id="editCurrentImgPreview" src="" style="max-width: 150px; max-height: 150px; border-radius: 6px; border: 1px solid var(--border-color); object-fit: cover; display: block; margin: 0 auto;">
+                    <button id="removeImgBtn" type="button" style="display: inline-block; margin-top: 10px; font-size: 0.8rem; color: #E23636; background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit;">Remove Image</button>
+                </div>
+
+                <input type="file" id="editImage" accept="image/png, image/jpeg, image/gif" style="margin-top: 5px;">
+                <p id="editUploadStatus" style="font-size: 0.8rem; color: #888; margin-top: 5px;"></p>
+            </div>
+
+            <button class="save-btn" id="saveEditBtn">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="edit-card" style="text-align: center; max-width: 400px; padding: 2rem;">
+            <h2 style="color: var(--primary-color); margin-bottom: 15px;">Delete Invite?</h2>
+            <p style="margin-bottom: 25px; opacity: 0.9; font-size: 0.95rem; line-height: 1.5;">Are you sure you want to delete this invite? The live link will immediately stop working.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="cancelDeleteBtn" class="action-btn" style="padding: 10px 24px; font-size: 1rem;">Cancel</button>
+                <button id="confirmDeleteBtn" class="save-btn" style="margin-top: 0; width: auto; padding: 10px 24px; background: var(--primary-color);">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <private-footer></private-footer>
 
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <script type="module" src="../js/invite-list.js"></script>
 </body>
 </html>
